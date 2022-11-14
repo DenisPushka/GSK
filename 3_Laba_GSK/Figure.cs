@@ -1,4 +1,5 @@
 ﻿using _3_Laba_GSK.access;
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,27 +11,35 @@ namespace _3_Laba_GSK
     internal class Figure
     {
         private readonly List<MyPoint> points;
-        public List<MyPoint> GetPoints() => points;
+        public List<MyPoint> GetPoints () => points;
 
-
-        public Figure() => points = new List<MyPoint>();
-        public Figure(List<MyPoint> points) => this.points = points;
-
-
-        public void AddPoint(Graphics graphics, MouseEventArgs e, Pen drawPen)
+        private Graphics Graphics { get; }
+        public Figure (Graphics graphics)
         {
-            points.Add(new MyPoint {X = e.X, Y = e.Y});
+            Graphics = graphics;
+            points = new List<MyPoint>();
+        }
+
+        public Figure (List<MyPoint> points, Graphics graphics)
+        {
+            Graphics = graphics;
+            this.points = points;
+        }
+
+        public void AddPoint (MouseEventArgs e, Pen drawPen)
+        {
+            points.Add(new MyPoint { X = e.X, Y = e.Y });
             if (points.Count > 1)
-                graphics.DrawLine(drawPen, points[points.Count - 2].ToPoint(), points[points.Count - 1].ToPoint());
+                Graphics.DrawLine(drawPen, points[points.Count - 2].ToPoint(), points[points.Count - 1].ToPoint());
         }
 
         // Клонирование фигуры
-        public List<MyPoint> Cloning() => points.ToList();
+        public List<MyPoint> Cloning () => points.ToList();
 
         // Алгоритм закрашивания внутри многоугольника
-        public void FillIn(Graphics graphics, Pen drawPen, Pen drawPenBorder, int pictureBoxHeight, bool haveBorder)
+        public void FillIn (Pen drawPen, Pen drawPenBorder, int pictureBoxHeight, bool haveBorder)
         {
-            PaintingLineInFigure(graphics, haveBorder, drawPenBorder);
+            PaintingLineInFigure(haveBorder, drawPenBorder);
             var arr = SearchYMinAndMax(pictureBoxHeight);
             var min = arr[0];
             var max = arr[1];
@@ -49,35 +58,35 @@ namespace _3_Laba_GSK
                 xs.Sort();
 
                 for (var i = 0; i + 1 < xs.Count; i += 2)
-                    graphics.DrawLine(drawPen, new Point((int) xs[i], y), new Point((int) xs[i + 1], y));
+                    Graphics.DrawLine(drawPen, new Point((int) xs[i], y), new Point((int) xs[i + 1], y));
 
                 xs.Clear();
             }
         }
 
         // Алгоритм для закрашивания многоугольника против часовой стрелки
-        public void FillOut(Graphics graphics, bool haveBorder, Pen drawPen, Pen drawPenBorder, PictureBox pictureBox)
+        public void FillOut (bool haveBorder, Pen drawPen, Pen drawPenBorder, PictureBox pictureBox)
         {
             if (points.Count == 0) return;
-            PaintingLineInFigure(graphics, haveBorder, drawPenBorder);
+            PaintingLineInFigure(haveBorder, drawPenBorder);
             var arr = SearchYMinAndMax(pictureBox.Height);
             var minY = (int) arr[0];
             var maxY = (int) arr[1];
             var cw = CalculationSquare((int) arr[2]);
-            PaintAreasOutsideShape(graphics, drawPen, cw, 0, minY, pictureBox.Width);
-            SecondCycleAlgorithm(graphics, drawPen, minY, maxY, cw, SearchXMinAndMax(), pictureBox.Width);
-            PaintAreasOutsideShape(graphics, drawPen, cw, maxY, pictureBox.Height, pictureBox.Width);
+            PaintAreasOutsideShape(drawPen, cw, 0, minY, pictureBox.Width);
+            SecondCycleAlgorithm(drawPen, minY, maxY, cw, SearchXMinAndMax(), pictureBox.Width);
+            PaintAreasOutsideShape(drawPen, cw, maxY, pictureBox.Height, pictureBox.Width);
         }
 
         // вычисление площади треугольника
-        private bool CalculationSquare(int j)
+        private bool CalculationSquare (int j)
         {
             if (j == 0)
                 return Square(points.Count - 1, j, j + 1);
             return j == points.Count - 1 ? Square(j - 1, j, 0) : Square(j - 1, j, j + 1);
         }
 
-        private bool Square(int prev, int now, int next) =>
+        private bool Square (int prev, int now, int next) =>
             0.5 * ((points[prev].X * points[now].Y)
                    + (points[prev].Y * points[next].X)
                    + (points[now].X * points[next].Y)
@@ -85,7 +94,7 @@ namespace _3_Laba_GSK
                    - (points[prev].Y * points[now].X)
                    - (points[prev].X * points[next].Y)) < 0;
 
-        public Tuple2<List<float>, List<float>> CalculationListXrAndXl(int y)
+        public Tuple2<List<float>, List<float>> CalculationListXrAndXl (int y)
         {
             var k = 0;
             var xR = new List<float>();
@@ -122,13 +131,13 @@ namespace _3_Laba_GSK
         /// <summary>
         ///  Условие пересечения
         /// </summary>
-        private bool Check(int i, int k, int y) =>
+        private bool Check (int i, int k, int y) =>
             (points[i].Y < y && points[k].Y >= y) || (points[i].Y >= y && points[k].Y < y);
 
         /// <summary>
         ///  Проверка пересичения прямой Y c отрезком
         /// </summary>
-        private List<float> CheckIntersection(List<float> xs, int i, int k, int y)
+        private List<float> CheckIntersection (List<float> xs, int i, int k, int y)
         {
             if (Check(i, k, y))
             {
@@ -141,15 +150,15 @@ namespace _3_Laba_GSK
         }
 
         // Вывод области вне фигуры
-        private static void PaintAreasOutsideShape(Graphics graphics, Pen drawPen, bool cw, int y, int end, int width)
+        private void PaintAreasOutsideShape (Pen drawPen, bool cw, int y, int end, int width)
         {
             if (cw)
                 for (var i = y; i < end; i++)
-                    graphics.DrawLine(drawPen, new Point(0, i), new Point(width, i));
+                    Graphics.DrawLine(drawPen, new Point(0, i), new Point(width, i));
         }
 
         // Основная часть алгоритма закрашивания вне многоугольника
-        private void SecondCycleAlgorithm(Graphics graphics, Pen drawPen, int minY, int maxY, bool cw, IReadOnlyList<float> arrForX,
+        private void SecondCycleAlgorithm (Pen drawPen, int minY, int maxY, bool cw, IReadOnlyList<float> arrForX,
             int width)
         {
             for (var y = minY; y < maxY; y++)
@@ -166,12 +175,13 @@ namespace _3_Laba_GSK
 
                 xL.Sort();
                 xR.Sort();
-                graphics.DrawLine(drawPen, new Point(0, y), new Point((int) xL[0], y));
+
+                Graphics.DrawLine(drawPen, new Point(0, y), new Point((int) xL[0], y));
                 for (var i = 0; i < xL.Count && i < xR.Count; i++)
                     if (xL[i] <= xR[i])
-                        graphics.DrawLine(drawPen, new Point((int) xL[i], y), new Point((int) xR[i], y));
+                        Graphics.DrawLine(drawPen, new Point((int) xL[i], y), new Point((int) xR[i], y));
 
-                graphics.DrawLine(drawPen, new Point((int) xR[xR.Count - 1], y), new Point(width, y));
+                Graphics.DrawLine(drawPen, new Point((int) xR[xR.Count - 1], y), new Point(width, y));
                 xL.Clear();
                 xR.Clear();
             }
@@ -180,19 +190,19 @@ namespace _3_Laba_GSK
         /// <summary>
         ///  Рисование сторон
         /// </summary>
-        public void PaintingLineInFigure(Graphics graphics, bool haveBorder, Pen drawPenBorder)
+        public void PaintingLineInFigure (bool haveBorder, Pen drawPenBorder)
         {
             if (haveBorder && points.Count > 1)
             {
                 for (var i = 0; i < points.Count - 1; i++)
-                    graphics.DrawLine(drawPenBorder, points[i].ToPoint(), points[i + 1].ToPoint());
+                    Graphics.DrawLine(drawPenBorder, points[i].ToPoint(), points[i + 1].ToPoint());
 
-                graphics.DrawLine(drawPenBorder, points[0].ToPoint(), points[points.Count - 1].ToPoint());
+                Graphics.DrawLine(drawPenBorder, points[0].ToPoint(), points[points.Count - 1].ToPoint());
             }
         }
 
         // Поиск мин/макс X
-        private float[] SearchXMinAndMax()
+        private float[] SearchXMinAndMax ()
         {
             var min = points[0].X;
             var max = 0.0f;
@@ -202,14 +212,14 @@ namespace _3_Laba_GSK
                 max = points[i].X > max ? points[i].X : max;
             }
 
-            return new[] {min, max};
+            return new[] { min, max };
         }
 
         // Поиск мин/макс Y
-        public float[] SearchYMinAndMax(int height)
+        public float[] SearchYMinAndMax (int height)
         {
             if (points.Count == 0)
-                return new float[] {0, 0, 0};
+                return new float[] { 0, 0, 0 };
 
             var min = points[0].Y;
             var max = points[0].Y;
@@ -228,10 +238,10 @@ namespace _3_Laba_GSK
 
             min = min < 0 ? 0 : min;
             max = max > height ? height : max;
-            return new[] {min, max, j};
+            return new[] { min, max, j };
         }
 
-        public bool ThisFigure(int mx, int my)
+        public bool ThisFigure (int mx, int my)
         {
             var m = 0;
             for (var i = 0; i <= points.Count - 1; i++)
@@ -247,7 +257,7 @@ namespace _3_Laba_GSK
             return m % 2 == 1;
         }
 
-        public void Move(int dx, int dy)
+        public void Move (int dx, int dy)
         {
             var buffer = new MyPoint();
             for (var i = 0; i <= points.Count - 1; i++)
@@ -258,25 +268,137 @@ namespace _3_Laba_GSK
             }
         }
 
-        public void Rotation(int rad, int height)
+        private void ToAndFromCenter (bool start, MyPoint e)
         {
-            var alpha = rad / 57.3;
-            var arrayY = SearchYMinAndMax(height);
-            var arrayX = SearchXMinAndMax();
-            var e = new MyPoint
+            if (start)
             {
-                X = (arrayX[0] + arrayX[1]) / 2,
-                Y = (arrayY[0] + arrayY[1]) / 2
+                float[,] toCenter =
+                {
+                    {1, 0, 0},
+                    {0, 1, 0},
+                    {-e.X, -e.Y, 1}
+                };
+                for (var i = 0; i < points.Count; i++)
+                    points[i] = Calculation.Matrix_1x3_3x3(points[i], toCenter);
+            }
+            else
+            {
+                float[,] fromCenter =
+                {
+                    {1, 0, 0},
+                    {0, 1, 0},
+                    {e.X, e.Y, 1}
+                };
+                for (var i = 0; i < points.Count; i++)
+                    points[i] = Calculation.Matrix_1x3_3x3(points[i], fromCenter);
+            }
+        }
+
+        private MyPoint CenterFigure (int height)
+        {
+            float[] arrayY, arrayX;
+            MyPoint e = new MyPoint();
+            arrayY = SearchYMinAndMax(height);
+            arrayX = SearchXMinAndMax();
+            e.X = (arrayX[0] + arrayX[1]) / 2;
+            e.Y = (arrayY[0] + arrayY[1]) / 2;
+            return e;
+        }
+
+        /// <summary>
+        ///  Отражение
+        /// </summary>
+        public void Mirror (char ch, int height)
+        {
+            float[,] matrix = new float[3, 3];
+            switch (ch)
+            {
+                case 'x':
+                    {
+                        matrix = new float[3, 3]{
+                            {-1, 0, 0 },
+                            { 0, 1, 0},
+                            { 0, 0, 1}
+                        };
+                    }
+                    break;
+                case 'y':
+                    {
+                        matrix = new float[3, 3]{
+                            {1, 0, 0 },
+                            { 0, -1, 0},
+                            { 0, 0, 1}
+                        };
+                    }
+                    break;
+                case 'o':
+                    {
+                        matrix = new float[3, 3]{
+                            {-1, 0, 0 },
+                            { 0, -1, 0},
+                            { 0, 0, 1}
+                        };
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            var e = CenterFigure(height);
+            ToAndFromCenter(true, e);
+
+            for (int i = 0; i < points.Count; i++)
+                points[i] = Calculation.Matrix_1x3_3x3(points[i], matrix);
+
+            ToAndFromCenter(false, e);
+        }
+
+        public void Zoom (int height, float[] zoom)
+        {
+            if (zoom[0] <= 0)
+                zoom[0] = -0.1f;
+            if (zoom[1] <= 0)
+                zoom[1] = -0.1f;
+            if (zoom[0] >= 0)
+                zoom[0] = 0.1f;
+            if (zoom[1] >= 0)
+                zoom[1] = 0.1f;
+
+            var sx = 1 + zoom[0];
+            var sy = 1 + zoom[1];
+            float[,] matrix = {
+                {sx,  0, 0 },
+                { 0, sy, 0 },
+                { 0,  0, 1 }
             };
 
-            float[,] toCenter =
-            {
-                {1, 0, 0},
-                {0, 1, 0},
-                {-e.X, -e.Y, 1}
-            };
-            for (var i = 0; i <= points.Count - 1; i++)
-                points[i] = Calculation.Matrix_1x3_3x3(points[i], toCenter);
+            var e = CenterFigure(height);
+            ToAndFromCenter(true, e);
+
+            for (int i = 0; i < points.Count; i++)
+                points[i] = Calculation.Matrix_1x3_3x3(points[i], matrix);
+
+            ToAndFromCenter(false, e);
+        }
+
+        private int updateAlpha = 0;
+        public void Rotation (int mouse, int height, TextBox textBox2)
+        {
+            float alpha = 0;
+            if (mouse > 0)
+            { 
+                alpha += 0.1f;
+                updateAlpha++;
+            }
+            else
+            { 
+                alpha -= 0.1f;
+                updateAlpha--;
+            }
+
+            textBox2.Text = updateAlpha.ToString();
+            var e = CenterFigure(height);
+            ToAndFromCenter(true, e);
 
             float[,] matrixRotation =
             {
@@ -284,24 +406,16 @@ namespace _3_Laba_GSK
                 {-(float) Math.Sin(alpha), (float) Math.Cos(alpha), 0.0f},
                 {0.0f, 0.0f, 1.0f}
             };
-            for (var i = 0; i <= points.Count - 1; i++)
+            for (var i = 0; i < points.Count; i++)
                 points[i] = Calculation.Matrix_1x3_3x3(points[i], matrixRotation);
 
-            float[,] fromCenter =
-            {
-                {1, 0, 0},
-                {0, 1, 0},
-                {e.X, e.Y, 1}
-            };
-            for (var i = 0; i <= points.Count - 1; i++)
-                points[i] = Calculation.Matrix_1x3_3x3(points[i], fromCenter);
+            ToAndFromCenter(false, e);
+
         }
-
-
         #region Читерский вывод
 
         // Вывод многоугольнкиа с помощью FillPolygon
-        private void PaintingFirstToAlgorithm(Graphics graphics, Pen drawPen)
+        private void PaintingFirstToAlgorithm (Graphics graphics, Pen drawPen)
         {
             var pgVertex = new Point[points.Count];
             for (var i = 0; i < points.Count; i++)
@@ -314,7 +428,7 @@ namespace _3_Laba_GSK
         }
 
         // Вывод многоугольнкиа вне с помощью FillPolygon
-        private void PaintingSecondToAlgorithm(Graphics graphics, Pen drawPen)
+        private void PaintingSecondToAlgorithm (Graphics graphics, Pen drawPen)
         {
             graphics.Clear(drawPen.Color);
             var pgVertex = new Point[points.Count];

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+
 using _3_Laba_GSK.access;
-using System.Threading;
 
 namespace _3_Laba_GSK
 {
@@ -32,11 +32,6 @@ namespace _3_Laba_GSK
         ///  Список фигур
         /// </summary>
         private readonly List<Figure> listFigure = new List<Figure>();
-
-        /// <summary>
-        ///  Цвет рисовки сторон
-        /// </summary>
-        private readonly Pen drawPenBorder = new Pen(Color.Orange, 5);
 
         /// <summary>
         ///  Массив для совместной обработки исходных границ сегмента
@@ -81,6 +76,11 @@ namespace _3_Laba_GSK
         private bool haveBorder;
 
         /// <summary>
+        ///  Проверка на кривой Безье
+        /// </summary>
+        private bool haveBezies;
+
+        /// <summary>
         ///  Количество углов
         /// </summary>
         private int angleCount;
@@ -98,8 +98,6 @@ namespace _3_Laba_GSK
         private Point pictureBoxMousePosition;
 
         #endregion
-
-        private int alpha;
 
         public Form1 ()
         {
@@ -128,23 +126,16 @@ namespace _3_Laba_GSK
                             isSpecialFigureBeingFormed = false;
                             return;
                         }
-
-                        if (e.Button == MouseButtons.Right)
+                        else if (e.Button == MouseButtons.Right && haveBezies)
+                            figure.DrawBezie(drawPen);
+                        else if (e.Button == MouseButtons.Right)
                             IncludeFill();
                         else
                             figure.AddPoint(e, drawPen);
                     }
                     break;
-                // Перемещение
-                case 1:
-                    ThisFugure(e);
-                    break;
-                // Вращение
-                case 2:
-                    ThisFugure(e);
-                    break;
-                // Масштабирование
-                case 3:
+                // Перемещение  // Вращение  // Масштабирование
+                default:
                     ThisFugure(e);
                     break;
             }
@@ -152,25 +143,13 @@ namespace _3_Laba_GSK
             pictureBox1.Image = bitmap;
         }
 
-        private float delta { get; set; }
-
         // Обработчик события
         private void PictureBoxMouseMove (object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left && operation == 1 & checkFigure)
                 MoveFigure(e);
-            //else if (e.Button == MouseButtons.Left && operation == 2 & checkFigure)
-            //{
-            //    var buff = alpha;
-            //    alpha = (int) Math.Sqrt(Math.Pow(e.X - pictureBoxMousePosition.X, 2) +
-            //                            Math.Pow(e.Y - pictureBoxMousePosition.Y, 2));
-            //    textBox2.Text = alpha.ToString();
-            //    if (alpha != buff)
-            //        Rotetion();
-            //}
         }
 
-        
         private void Rotetion (object sender, MouseEventArgs e)
         {
             if (operation == 2)
@@ -178,7 +157,7 @@ namespace _3_Laba_GSK
                 listFigure[listFigure.Count - 1].Rotation(e.Delta, pictureBox1.Height, textBox2);
                 graphics.Clear(pictureBox1.BackColor);
                 listFigure[listFigure.Count - 1]
-                    .FillIn(drawPen, drawPenBorder, pictureBox1.Height, haveBorder);
+                    .FillIn(drawPen, pictureBox1.Height, haveBorder);
                 pictureBox1.Image = bitmap;
             }
         }
@@ -190,7 +169,7 @@ namespace _3_Laba_GSK
                 listFigure[listFigure.Count - 1].Zoom(pictureBox1.Height, new float[] { e.Delta, e.Delta });
                 graphics.Clear(pictureBox1.BackColor);
                 listFigure[listFigure.Count - 1]
-                    .FillIn(drawPen, drawPenBorder, pictureBox1.Height, haveBorder);
+                    .FillIn(drawPen, pictureBox1.Height, haveBorder);
                 pictureBox1.Image = bitmap;
             }
         }
@@ -210,7 +189,7 @@ namespace _3_Laba_GSK
         {
             listFigure[listFigure.Count - 1].Move(e.X - pictureBoxMousePosition.X, e.Y - pictureBoxMousePosition.Y);
             graphics.Clear(pictureBox1.BackColor);
-            listFigure[listFigure.Count - 1].FillIn(drawPen, drawPenBorder, pictureBox1.Height, haveBorder);
+            listFigure[listFigure.Count - 1].FillIn(drawPen, pictureBox1.Height, haveBorder);
             pictureBox1.Image = bitmap;
             pictureBoxMousePosition = e.Location;
         }
@@ -245,9 +224,9 @@ namespace _3_Laba_GSK
         private void IncludeFill ()
         {
             if (fill == Fill.In)
-                figure.FillIn(drawPen, drawPenBorder, pictureBox1.Height, haveBorder);
+                figure.FillIn(drawPen, pictureBox1.Height, haveBorder);
             else
-                figure.FillOut(haveBorder, drawPen, drawPenBorder, pictureBox1);
+                figure.FillOut(haveBorder, drawPen, pictureBox1);
             listFigure.Add(CloningFigure());
             figure.GetPoints().Clear();
             pictureBox1.Image = bitmap;
@@ -260,8 +239,8 @@ namespace _3_Laba_GSK
             if (listFigure.Count > 1)
             {
                 graphics.Clear(Color.White);
-                listFigure[0].PaintingLineInFigure(haveBorder, drawPenBorder); // Рисуем стороны первой фигуры
-                listFigure[1].PaintingLineInFigure(haveBorder, drawPenBorder); // Рисуем стороны второй фигуры
+                listFigure[0].PaintingLineInFigure(haveBorder); // Рисуем стороны первой фигуры
+                listFigure[1].PaintingLineInFigure(haveBorder); // Рисуем стороны второй фигуры
                 Tmo();
             }
 
@@ -527,8 +506,7 @@ namespace _3_Laba_GSK
                     break;
                 case 1:
                     setQ[0] = 3;
-                    setQ[1] = 3;
-                    ; // пересечение
+                    setQ[1] = 3; // пересечение
                     break;
                 case 2:
                     setQ[0] = 1;
@@ -603,5 +581,7 @@ namespace _3_Laba_GSK
 
             pictureBox1.Image = bitmap;
         }
+
+        private void CheckBoxBeziers (object sender, EventArgs e) => haveBezies = checkBox2.Checked;
     }
 }

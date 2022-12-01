@@ -36,12 +36,13 @@ namespace _3_Laba_GSK
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.button3 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.comboBox6 = new System.Windows.Forms.ComboBox();
             this.comboBox5 = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
             this.comboBox4 = new System.Windows.Forms.ComboBox();
-            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -81,7 +82,6 @@ namespace _3_Laba_GSK
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.Form1_Load);
             this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.PictureMouseDown);
-            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureMouseDown);
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureBoxMouseMove);
             // 
             // comboBox1
@@ -140,6 +140,7 @@ namespace _3_Laba_GSK
             this.panel1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.panel1.AutoSize = true;
             this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.panel1.Controls.Add(this.checkBox2);
             this.panel1.Controls.Add(this.button3);
             this.panel1.Controls.Add(this.textBox2);
             this.panel1.Controls.Add(this.comboBox6);
@@ -157,9 +158,30 @@ namespace _3_Laba_GSK
             this.panel1.TabIndex = 6;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.Panel1_Paint);
             // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(603, 106);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(157, 17);
+            this.checkBox2.TabIndex = 13;
+            this.checkBox2.Text = "Применить Кривую безье";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.CheckBoxBeziers);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(829, 18);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(275, 23);
+            this.button3.TabIndex = 12;
+            this.button3.Text = "Применить выбранное отражение\r\n";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.DoMirror);
+            // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(274, 19);
+            this.textBox2.Location = new System.Drawing.Point(346, 18);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 20);
             this.textBox2.TabIndex = 11;
@@ -175,7 +197,7 @@ namespace _3_Laba_GSK
             "Масштабирование",
             "Отражение OX",
             "Отражение OY",
-            "Отражение OZ"});
+            "Отражение нач. кординат"});
             this.comboBox6.Location = new System.Drawing.Point(603, 18);
             this.comboBox6.Name = "comboBox6";
             this.comboBox6.Size = new System.Drawing.Size(175, 21);
@@ -238,16 +260,6 @@ namespace _3_Laba_GSK
             this.comboBox4.Text = "ТМО";
             this.comboBox4.SelectedIndexChanged += new System.EventHandler(this.ComboBox_SelectTMO);
             // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(829, 18);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(275, 23);
-            this.button3.TabIndex = 12;
-            this.button3.Text = "Применить выбранное отражение\r\n";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.DoMirror);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -286,6 +298,7 @@ namespace _3_Laba_GSK
         private System.Windows.Forms.ComboBox comboBox6;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.CheckBox checkBox2;
     }
 }
 

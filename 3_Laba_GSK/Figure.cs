@@ -14,6 +14,8 @@ namespace _3_Laba_GSK
         public List<MyPoint> GetPoints () => points;
 
         private Graphics Graphics { get; }
+
+        private Pen DrawPenBorder { get; } = new Pen(Color.Orange, 5);
         public Figure (Graphics graphics)
         {
             Graphics = graphics;
@@ -33,13 +35,52 @@ namespace _3_Laba_GSK
                 Graphics.DrawLine(drawPen, points[points.Count - 2].ToPoint(), points[points.Count - 1].ToPoint());
         }
 
+        // Факториал
+        double Factorial (int n)
+        {
+            double x = 1;
+            for (var i = 1; i <= n; i++)
+                x *= i;
+            return x;
+        }
+
+        private double Polinom (int i, int n, float t) => Factorial(n) / (Factorial(i) * Factorial(n - i))
+            * (float) Math.Pow(t, i) * (float) Math.Pow(1 - t, n - i);
+
+        // Кривая Безье
+        public void DrawBezie (Pen DrPen)
+        {
+            var dt = 0.01;
+            var t = dt;
+            double xPred = points[0].X;
+            double yPred = points[0].Y;
+            while (t < 1)
+            {
+                double x = 0;
+                double y = 0;
+                
+                for (var i = 0; i < points.Count; i++)
+                {
+                    var b = Polinom(i, points.Count - 1, (float) t);
+                    x += points[i].X * b;
+                    y += points[i].Y * b;
+                }
+
+                Graphics.DrawLine(DrPen, new Point((int) xPred, (int) yPred), new Point((int) x, (int) y));
+                t += dt;
+                xPred = x;
+                yPred = y;
+            }
+            points.Clear();
+        }
+
         // Клонирование фигуры
         public List<MyPoint> Cloning () => points.ToList();
 
         // Алгоритм закрашивания внутри многоугольника
-        public void FillIn (Pen drawPen, Pen drawPenBorder, int pictureBoxHeight, bool haveBorder)
+        public void FillIn (Pen drawPen, int pictureBoxHeight, bool haveBorder)
         {
-            PaintingLineInFigure(haveBorder, drawPenBorder);
+            PaintingLineInFigure(haveBorder);
             var arr = SearchYMinAndMax(pictureBoxHeight);
             var min = arr[0];
             var max = arr[1];
@@ -65,10 +106,10 @@ namespace _3_Laba_GSK
         }
 
         // Алгоритм для закрашивания многоугольника против часовой стрелки
-        public void FillOut (bool haveBorder, Pen drawPen, Pen drawPenBorder, PictureBox pictureBox)
+        public void FillOut (bool haveBorder, Pen drawPen, PictureBox pictureBox)
         {
             if (points.Count == 0) return;
-            PaintingLineInFigure(haveBorder, drawPenBorder);
+            PaintingLineInFigure(haveBorder);
             var arr = SearchYMinAndMax(pictureBox.Height);
             var minY = (int) arr[0];
             var maxY = (int) arr[1];
@@ -190,14 +231,14 @@ namespace _3_Laba_GSK
         /// <summary>
         ///  Рисование сторон
         /// </summary>
-        public void PaintingLineInFigure (bool haveBorder, Pen drawPenBorder)
+        public void PaintingLineInFigure (bool haveBorder)
         {
             if (haveBorder && points.Count > 1)
             {
                 for (var i = 0; i < points.Count - 1; i++)
-                    Graphics.DrawLine(drawPenBorder, points[i].ToPoint(), points[i + 1].ToPoint());
+                    Graphics.DrawLine(DrawPenBorder, points[i].ToPoint(), points[i + 1].ToPoint());
 
-                Graphics.DrawLine(drawPenBorder, points[0].ToPoint(), points[points.Count - 1].ToPoint());
+                Graphics.DrawLine(DrawPenBorder, points[0].ToPoint(), points[points.Count - 1].ToPoint());
             }
         }
 
@@ -316,8 +357,8 @@ namespace _3_Laba_GSK
                 case 'x':
                     {
                         matrix = new float[3, 3]{
-                            {-1, 0, 0 },
-                            { 0, 1, 0},
+                            { 1, 0, 0},
+                            { 0,-1, 0},
                             { 0, 0, 1}
                         };
                     }
@@ -325,8 +366,8 @@ namespace _3_Laba_GSK
                 case 'y':
                     {
                         matrix = new float[3, 3]{
-                            {1, 0, 0 },
-                            { 0, -1, 0},
+                            {-1, 0, 0},
+                            { 0, 1, 0},
                             { 0, 0, 1}
                         };
                     }
@@ -334,8 +375,8 @@ namespace _3_Laba_GSK
                 case 'o':
                     {
                         matrix = new float[3, 3]{
-                            {-1, 0, 0 },
-                            { 0, -1, 0},
+                            {-1, 0, 0},
+                            { 0,-1, 0},
                             { 0, 0, 1}
                         };
                     }
@@ -355,16 +396,12 @@ namespace _3_Laba_GSK
 
         public void Zoom (int height, float[] zoom)
         {
-            if (zoom[0] <= 0)
-                zoom[0] = -0.1f;
-            if (zoom[1] <= 0)
-                zoom[1] = -0.1f;
-            if (zoom[0] >= 0)
-                zoom[0] = 0.1f;
-            if (zoom[1] >= 0)
-                zoom[1] = 0.1f;
+            if (zoom[0] <= 0) zoom[0] = -0.1f;
+            if (zoom[1] <= 0) zoom[1] = -0.1f;
+            if (zoom[0] >= 0) zoom[0] = 0.1f;
+            if (zoom[1] >= 0) zoom[1] = 0.1f;
 
-            var sx = 1 + zoom[0];
+            var sx = 1 + zoom[0]; // для расстяжения по OY комментим + zoom[0];
             var sy = 1 + zoom[1];
             float[,] matrix = {
                 {sx,  0, 0 },
@@ -386,13 +423,13 @@ namespace _3_Laba_GSK
         {
             float alpha = 0;
             if (mouse > 0)
-            { 
-                alpha += 0.1f;
+            {
+                alpha += 0.0175f;
                 updateAlpha++;
             }
             else
-            { 
-                alpha -= 0.1f;
+            {
+                alpha -= 0.0175f;
                 updateAlpha--;
             }
 

@@ -12,10 +12,11 @@ namespace _3_Laba_GSK
     {
         private readonly List<MyPoint> points;
         public List<MyPoint> GetPoints () => points;
-
+        public bool IsFunction { get; set; } = false;
+        public bool DoTmo { get; set; } = false;
         private Graphics Graphics { get; }
-
         private Pen DrawPenBorder { get; } = new Pen(Color.Orange, 5);
+
         public Figure (Graphics graphics)
         {
             Graphics = graphics;
@@ -46,19 +47,20 @@ namespace _3_Laba_GSK
 
         private double Polinom (int i, int n, float t) => Factorial(n) / (Factorial(i) * Factorial(n - i))
             * (float) Math.Pow(t, i) * (float) Math.Pow(1 - t, n - i);
-
+        
         // Кривая Безье
-        public void DrawBezie (Pen DrPen)
+        public Figure DrawBezier (Pen drPen)
         {
-            var dt = 0.01;
+            const double dt = 0.01;
             var t = dt;
             double xPred = points[0].X;
             double yPred = points[0].Y;
+            var fig = new List<MyPoint>();
             while (t < 1)
             {
                 double x = 0;
                 double y = 0;
-                
+
                 for (var i = 0; i < points.Count; i++)
                 {
                     var b = Polinom(i, points.Count - 1, (float) t);
@@ -66,12 +68,15 @@ namespace _3_Laba_GSK
                     y += points[i].Y * b;
                 }
 
-                Graphics.DrawLine(DrPen, new Point((int) xPred, (int) yPred), new Point((int) x, (int) y));
+                fig.Add(new MyPoint((float) x, (float) y));
+                Graphics.DrawLine(drPen, new Point((int) xPred, (int) yPred), new Point((int) x, (int) y));
                 t += dt;
                 xPred = x;
                 yPred = y;
             }
+
             points.Clear();
+            return new Figure(fig, Graphics);
         }
 
         // Клонирование фигуры
@@ -242,6 +247,12 @@ namespace _3_Laba_GSK
             }
         }
 
+        public void PaintingLineInFigure (Pen drawPen)
+        {
+            for (var i = 0; i < points.Count - 1; i++)
+                Graphics.DrawLine(drawPen, points[i].ToPoint(), points[i + 1].ToPoint());
+        }
+
         // Поиск мин/макс X
         private float[] SearchXMinAndMax ()
         {
@@ -394,14 +405,14 @@ namespace _3_Laba_GSK
             ToAndFromCenter(false, e);
         }
 
-        public void Zoom (int height, float[] zoom)
+        public void Zoom (int height, float[] zoom, int operation, MouseEventArgs em)
         {
             if (zoom[0] <= 0) zoom[0] = -0.1f;
             if (zoom[1] <= 0) zoom[1] = -0.1f;
             if (zoom[0] >= 0) zoom[0] = 0.1f;
             if (zoom[1] >= 0) zoom[1] = 0.1f;
 
-            var sx = 1 + zoom[0]; // для расстяжения по OY комментим + zoom[0];
+            var sx = operation == 5 ? 1 : 1 + zoom[0];
             var sy = 1 + zoom[1];
             float[,] matrix = {
                 {sx,  0, 0 },
@@ -409,7 +420,7 @@ namespace _3_Laba_GSK
                 { 0,  0, 1 }
             };
 
-            var e = CenterFigure(height);
+            var e = operation == 6 ? new MyPoint(em.X, em.Y) : CenterFigure(height);
             ToAndFromCenter(true, e);
 
             for (int i = 0; i < points.Count; i++)
@@ -419,7 +430,7 @@ namespace _3_Laba_GSK
         }
 
         private int updateAlpha = 0;
-        public void Rotation (int mouse, int height, TextBox textBox2)
+        public void Rotation (int mouse, int height, TextBox textBox2, MouseEventArgs em, int operation)
         {
             float alpha = 0;
             if (mouse > 0)
@@ -434,7 +445,7 @@ namespace _3_Laba_GSK
             }
 
             textBox2.Text = updateAlpha.ToString();
-            var e = CenterFigure(height);
+            var e = operation == 3 ? new MyPoint(em.X, em.Y) : CenterFigure(height);
             ToAndFromCenter(true, e);
 
             float[,] matrixRotation =

@@ -106,8 +106,8 @@ namespace _3_Laba_GSK
             graphics = Graphics.FromImage(bitmap);
             figure = new Figure(graphics);
             StartPosition = FormStartPosition.CenterScreen;
-            MouseWheel += new MouseEventHandler(Zoom);
-            MouseWheel += new MouseEventHandler(Rotetion);
+            MouseWheel += GeometricTransformation;
+            MouseWheel += DoMirror;
         }
 
         // Обработчик события
@@ -124,17 +124,20 @@ namespace _3_Laba_GSK
                             CreateFigure(e);
                             IncludeFill();
                             isSpecialFigureBeingFormed = false;
-                            return;
                         }
                         else if (e.Button == MouseButtons.Right && haveBezies)
-                            figure.DrawBezie(drawPen);
+                        {
+                            figure = figure.DrawBezier(drawPen);
+                            listFigure.Add(CloningFigure());
+                            listFigure[listFigure.Count - 1].IsFunction = true;
+                            figure.GetPoints().Clear();
+                        }
                         else if (e.Button == MouseButtons.Right)
                             IncludeFill();
                         else
                             figure.AddPoint(e, drawPen);
                     }
                     break;
-                // Перемещение  // Вращение  // Масштабирование
                 default:
                     ThisFugure(e);
                     break;
@@ -150,29 +153,38 @@ namespace _3_Laba_GSK
                 MoveFigure(e);
         }
 
-        private void Rotetion (object sender, MouseEventArgs e)
+        private void GeometricTransformation (object sender, MouseEventArgs e)
         {
-            if (operation == 2)
+            var figureBuff = listFigure[listFigure.Count - 1];
+            if (figureBuff.DoTmo)
             {
-                listFigure[listFigure.Count - 1].Rotation(e.Delta, pictureBox1.Height, textBox2);
-                graphics.Clear(pictureBox1.BackColor);
-                listFigure[listFigure.Count - 1]
-                    .FillIn(drawPen, pictureBox1.Height, haveBorder);
+                TG(figureBuff, e);
+                TG(listFigure[listFigure.Count - 2], e);
+                graphics.Clear(Color.White);
+                Tmo();
                 pictureBox1.Image = bitmap;
             }
+            else
+                TG(figureBuff, e);
+
         }
 
-        private void Zoom (object sender, MouseEventArgs e)
+
+        private void TG (Figure figureBuff, MouseEventArgs e)
         {
-            if (operation == 3)
-            {
-                listFigure[listFigure.Count - 1].Zoom(pictureBox1.Height, new float[] { e.Delta, e.Delta });
-                graphics.Clear(pictureBox1.BackColor);
-                listFigure[listFigure.Count - 1]
-                    .FillIn(drawPen, pictureBox1.Height, haveBorder);
-                pictureBox1.Image = bitmap;
-            }
+            if (operation == 2 || operation == 3)
+                figureBuff.Rotation(e.Delta, pictureBox1.Height, textBox2, e, operation);
+            else if (operation == 4 || operation == 5 || operation == 6)
+                figureBuff.Zoom(pictureBox1.Height, new float[] { e.Delta, e.Delta }, operation, e);
+
+            graphics.Clear(pictureBox1.BackColor);
+            if (figureBuff.IsFunction)
+                figureBuff.PaintingLineInFigure(drawPen);
+            else
+                figureBuff.FillIn(drawPen, pictureBox1.Height, haveBorder);
+            pictureBox1.Image = bitmap;
         }
+
 
         private void ThisFugure (MouseEventArgs e)
         {
@@ -250,16 +262,20 @@ namespace _3_Laba_GSK
         // Алгоритм теоретико-множественных операций
         private void Tmo ()
         {
-            var arr = listFigure[0].SearchYMinAndMax(pictureBox1.Height);
-            var arr2 = listFigure[1].SearchYMinAndMax(pictureBox1.Height);
+            var figure1 = listFigure[0];
+            var figure2 = listFigure[1];
+            var arr = figure1.SearchYMinAndMax(pictureBox1.Height);
+            var arr2 = figure2.SearchYMinAndMax(pictureBox1.Height);
+            figure1.DoTmo = true;
+            figure2.DoTmo = true;
             var minY = arr[0] < arr2[0] ? arr[0] : arr2[0];
             var maxY = arr[1] > arr2[1] ? arr[1] : arr2[1];
             for (var Y = (int) minY; Y < maxY; Y++)
             {
-                var A = listFigure[0].CalculationListXrAndXl(Y);
+                var A = figure1.CalculationListXrAndXl(Y);
                 List<float> xAl = A.First;
                 List<float> xAr = A.Second;
-                var B = listFigure[1].CalculationListXrAndXl(Y);
+                var B = figure2.CalculationListXrAndXl(Y);
                 List<float> xBl = B.First;
                 List<float> xBr = B.Second;
                 if (xAl.Count == 0 && xBl.Count == 0)

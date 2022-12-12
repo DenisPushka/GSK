@@ -295,7 +295,7 @@ namespace _3_Laba_GSK
         /// <summary>
         ///  Отражение
         /// </summary>
-        public void Mirror (char ch, int height, int operation, MouseEventArgs eventMouse)
+        public void Mirror (int height, MouseEventArgs eventMouse)
         {
             var matrix = new float[,]
                     {

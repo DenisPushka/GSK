@@ -582,15 +582,15 @@ namespace _3_Laba_GSK
             {
                 // Отражение
                 // ОХ
-                case 4:
+                case 7:
                     listFigure[listFigure.Count - 1].Mirror('x', pictureBox1.Height);
                     break;
                 // OY
-                case 5:
+                case 8:
                     listFigure[listFigure.Count - 1].Mirror('y', pictureBox1.Height);
                     break;
                 // относительно центра
-                case 6:
+                case 9:
                     listFigure[listFigure.Count - 1].Mirror('o', pictureBox1.Height);
                     break;
             }

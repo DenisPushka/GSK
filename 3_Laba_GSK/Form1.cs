@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-
 using _3_Laba_GSK.access;
 
 namespace _3_Laba_GSK
@@ -23,18 +22,22 @@ namespace _3_Laba_GSK
 
         private readonly Graphics graphics;
         private Figure figure;
+
         /// <summary>
         ///  Список фигур
         /// </summary>
         private readonly List<Figure> listFigure = new List<Figure>();
+
         /// <summary>
         ///  Массив для совместной обработки исходных границ сегмента
         /// </summary>
         private M[] arrayM;
+
         /// <summary>
         ///  Спец фигура формируется
         /// </summary>
         private bool isSpecialFigureBeingFormed;
+
         /// <summary>
         ///  Буффер
         /// </summary>
@@ -46,30 +49,37 @@ namespace _3_Laba_GSK
         ///  Выбор алгоритма закрашивания фигуры (заливка)
         /// </summary>
         private readonly Fill fill = Fill.In;
+
         /// <summary>
         /// Выбор фигуры для рисования
         /// </summary>
         private FigureEnum figureEnum;
+
         /// <summary>
         ///  Множество для ТМО
         /// </summary>
         private readonly int[] setQ = new int[2];
+
         /// <summary>
         ///  Выбор цвета закрашивания фигуры
         /// </summary>
         private readonly Pen drawPen = new Pen(Color.Black, 1);
+
         /// <summary>
         ///  Проверка на рисование сторон
         /// </summary>
         private bool haveBorder;
+
         /// <summary>
         ///  Проверка на кривой Безье
         /// </summary>
         private bool haveBezies;
+
         /// <summary>
         ///  Количество углов
         /// </summary>
         private int angleCount;
+
         /// <summary>
         ///  Выбор операции
         /// </summary>
@@ -84,7 +94,7 @@ namespace _3_Laba_GSK
 
         #endregion
 
-        public Form1 ()
+        public Form1()
         {
             InitializeComponent();
             bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -96,32 +106,32 @@ namespace _3_Laba_GSK
         }
 
         // Обработчик события
-        private void PictureMouseDown (object sender, MouseEventArgs e)
+        private void PictureMouseDown(object sender, MouseEventArgs e)
         {
             pictureBoxMousePosition = e.Location;
             switch (operation)
             {
                 // Зарисовка
                 case 0:
+                {
+                    if (isSpecialFigureBeingFormed)
                     {
-                        if (isSpecialFigureBeingFormed)
-                        {
-                            CreateFigure(e);
-                            IncludeFill();
-                            isSpecialFigureBeingFormed = false;
-                        }
-                        else if (e.Button == MouseButtons.Right && haveBezies)
-                        {
-                            figure = figure.DrawBezier(drawPen);
-                            listFigure.Add(CloningFigure());
-                            listFigure[listFigure.Count - 1].IsFunction = true;
-                            figure.GetPoints().Clear();
-                        }
-                        else if (e.Button == MouseButtons.Right)
-                            IncludeFill();
-                        else
-                            figure.AddPoint(e, drawPen);
+                        Create(e);
+                        FillIncl();
+                        isSpecialFigureBeingFormed = false;
                     }
+                    else if (e.Button == MouseButtons.Right && haveBezies)
+                    {
+                        figure = figure.DrawBezier(drawPen);
+                        listFigure.Add(CloningFigure());
+                        listFigure[listFigure.Count - 1].IsFunction = true;
+                        figure.GetPoints().Clear();
+                    }
+                    else if (e.Button == MouseButtons.Right)
+                        FillIncl();
+                    else
+                        figure.AddPoint(e, drawPen);
+                }
                     break;
                 // Перемещение
                 default:
@@ -133,13 +143,13 @@ namespace _3_Laba_GSK
         }
 
         // Обработчик события
-        private void PictureBoxMouseMove (object sender, MouseEventArgs e)
+        private void PictureBoxMouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left && operation == 1 & checkFigure)
                 MoveFigure(e);
         }
 
-        private void GeometricTransformation (object sender, MouseEventArgs e)
+        private void GeometricTransformation(object sender, MouseEventArgs e)
         {
             var figureBuff = listFigure[listFigure.Count - 1];
             if (figureBuff.DoTmo)
@@ -152,24 +162,25 @@ namespace _3_Laba_GSK
             }
             else
                 TG(figureBuff, e);
-
         }
 
-        private void TG (Figure figureBuff, MouseEventArgs e)
+        private void TG(Figure figureBuff, MouseEventArgs e)
         {
-            if (operation == 2)
-                figureBuff.Rotation(e.Delta, pictureBox1.Height, textBox2, e);
-            else if (operation == 3)
-                figureBuff.Zoom(pictureBox1.Height, new float[] { e.Delta, e.Delta }, e);
+            if (operation == 1)
+                figureBuff.Rotation(e.Delta, textBox2, e);
+            else if (operation == 2)
+                figureBuff.Zoom(pictureBox1.Height, new float[] {e.Delta, e.Delta});
 
             graphics.Clear(pictureBox1.BackColor);
             if (figureBuff.IsFunction)
                 figureBuff.PaintingLineInFigure(drawPen);
             else
-                figureBuff.FillIn(drawPen, pictureBox1.Height, haveBorder);
+                figureBuff.FillIn(drawPen, pictureBox1.Height);
             pictureBox1.Image = bitmap;
         }
-        private void ThisFigure (MouseEventArgs e)
+
+
+        private void ThisFigure(MouseEventArgs e)
         {
             if (listFigure[listFigure.Count - 1].ThisFigure(e.X, e.Y))
             {
@@ -180,16 +191,16 @@ namespace _3_Laba_GSK
                 checkFigure = false;
         }
 
-        private void MoveFigure (MouseEventArgs e)
+        private void MoveFigure(MouseEventArgs e)
         {
             listFigure[listFigure.Count - 1].Move(e.X - pictureBoxMousePosition.X, e.Y - pictureBoxMousePosition.Y);
             graphics.Clear(pictureBox1.BackColor);
-            listFigure[listFigure.Count - 1].FillIn(drawPen, pictureBox1.Height, haveBorder);
+            listFigure[listFigure.Count - 1].FillIn(drawPen, pictureBox1.Height);
             pictureBox1.Image = bitmap;
             pictureBoxMousePosition = e.Location;
         }
 
-        private void CreateFigure (MouseEventArgs e)
+        private void Create(MouseEventArgs e)
         {
             switch (figureEnum)
             {
@@ -204,24 +215,21 @@ namespace _3_Laba_GSK
             }
         }
 
-        private void IncludeFill ()
+        private void FillIncl()
         {
-            if (fill == Fill.In)
-                figure.FillIn(drawPen, pictureBox1.Height, haveBorder);
+            figure.FillIn(drawPen, pictureBox1.Height);
             listFigure.Add(CloningFigure());
             figure.GetPoints().Clear();
             pictureBox1.Image = bitmap;
         }
 
-        private Figure CloningFigure () => new Figure(figure.Cloning(), graphics);
+        private Figure CloningFigure() => new Figure(figure.Cloning(), graphics);
 
-        private void CheckWorkTmo ()
+        private void CheckWorkTmo()
         {
             if (listFigure.Count > 1)
             {
                 graphics.Clear(Color.White);
-                listFigure[0].PaintingLineInFigure(haveBorder); // Рисуем ребра первой фигуры
-                listFigure[1].PaintingLineInFigure(haveBorder); // Рисуем ребра второй фигуры
                 Tmo();
             }
 
@@ -229,7 +237,7 @@ namespace _3_Laba_GSK
         }
 
         // Алгоритм теоретико-множественных операций
-        private void Tmo ()
+        private void Tmo()
         {
             var figure1 = listFigure[listFigure.Count - 2];
             var figure2 = listFigure[listFigure.Count - 1];
@@ -306,28 +314,28 @@ namespace _3_Laba_GSK
         }
 
         // Проверка вхождения Q в множество setQ
-        private bool IncludeQInSetQ (int q) => setQ[0] <= q && q <= setQ[1];
+        private bool IncludeQInSetQ(int q) => setQ[0] <= q && q <= setQ[1];
 
         /// <summary>
         ///  Сортировка по Х
         /// </summary>
-        private void SortArrayM ()
+        private void SortArrayM()
         {
             for (var write = 0; write < arrayM.Length; write++)
-                for (var sort = 0; sort < arrayM.Length - 1; sort++)
-                    if (arrayM[sort].X > arrayM[sort + 1].X)
-                    {
-                        var buf = new M(arrayM[sort + 1].X, arrayM[sort + 1].Dq);
-                        arrayM[sort + 1] = arrayM[sort];
-                        arrayM[sort] = buf;
-                    }
+            for (var sort = 0; sort < arrayM.Length - 1; sort++)
+                if (arrayM[sort].X > arrayM[sort + 1].X)
+                {
+                    var buf = new M(arrayM[sort + 1].X, arrayM[sort + 1].Dq);
+                    arrayM[sort + 1] = arrayM[sort];
+                    arrayM[sort] = buf;
+                }
         }
 
         #region Создание фигур
 
-        private void CreateCross (MouseEventArgs e)
+        private void CreateCross(MouseEventArgs e)
         {
-            var cross = new List<MyPoint>()
+            var cross = new List<MyPoint>
             {
                 new MyPoint(e.X - 150, e.Y - 50),
                 new MyPoint(e.X - 50, e.Y - 50),
@@ -345,7 +353,7 @@ namespace _3_Laba_GSK
             figure = new Figure(cross, graphics);
         }
 
-        private void CreateStar (MouseEventArgs e)
+        private void CreateStar(MouseEventArgs e)
         {
             const double R = 25;
             const double r = 50;
@@ -367,7 +375,7 @@ namespace _3_Laba_GSK
         #region Выбор пользователя
 
         // Выбираем фигуру
-        private void ComboBox_SelectFigure (object sender, EventArgs e)
+        private void ComboBox_SelectFigure(object sender, EventArgs e)
         {
             switch (comboBox3.SelectedIndex)
             {
@@ -383,7 +391,7 @@ namespace _3_Laba_GSK
         }
 
         // Выбираем цвет закраски
-        private void ComboBox_GetColor (object sender, EventArgs e)
+        private void ComboBox_GetColor(object sender, EventArgs e)
         {
             switch (comboBox1.SelectedIndex)
             {
@@ -403,10 +411,10 @@ namespace _3_Laba_GSK
         }
 
         // Имеют ли фигуры границы
-        private void ComboBox_HaveBorder (object sender, EventArgs e) => haveBorder = checkBox1.Checked;
+        private void ComboBox_HaveBorder(object sender, EventArgs e) => haveBorder = checkBox1.Checked;
 
         // Выбор ТМО
-        private void ComboBox_SelectTMO (object sender, EventArgs e)
+        private void ComboBox_SelectTMO(object sender, EventArgs e)
         {
             switch (comboBox4.SelectedIndex)
             {
@@ -425,13 +433,13 @@ namespace _3_Laba_GSK
             }
         }
 
-        // Ввод кол-ва углов
-        private void ComboBox_AngleCount (object sender, EventArgs e) => angleCount = comboBox5.SelectedIndex + 5;
+        // Ввод кол-ва вершин звезды
+        private void ComboBox_AngleCount(object sender, EventArgs e) => angleCount = comboBox5.SelectedIndex + 5;
 
-        private void ComboBox_SelectOperation (object sender, EventArgs e) => operation = comboBox6.SelectedIndex;
+        private void ComboBox_SelectOperation(object sender, EventArgs e) => operation = comboBox6.SelectedIndex;
 
         // Кнопка очистки формы
-        private void Button_Clear (object sender, EventArgs e)
+        private void Button_Clear(object sender, EventArgs e)
         {
             figure.GetPoints().Clear();
             pictureBox1.Image = bitmap;
@@ -440,7 +448,7 @@ namespace _3_Laba_GSK
             operation = 0;
         }
 
-        private void Button_RunTMO (object sender, EventArgs e)
+        private void Button_RunTMO(object sender, EventArgs e)
         {
             CheckWorkTmo();
             pictureBox1.Image = bitmap;
@@ -448,36 +456,36 @@ namespace _3_Laba_GSK
 
         #endregion
 
-        private void Form1_Load (object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
         }
 
-        private void Panel1_Paint (object sender, PaintEventArgs e)
+        private void Panel1_Paint(object sender, PaintEventArgs e)
         {
         }
 
-        private void textBox2_TextChanged (object sender, EventArgs e)
+        private void textBox2_TextChanged(object sender, EventArgs e)
         {
         }
 
         /// <summary>
         /// Отражение
         /// </summary>
-        private void DoMirror (object sender, MouseEventArgs e)
+        private void DoMirror(object sender, MouseEventArgs e)
         {
             if (listFigure.Count == 0) return;
 
             switch (operation)
             {
                 // Отражение
-                case 4:
-                    listFigure[listFigure.Count - 1].Mirror(pictureBox1.Height, e);
+                case 3:
+                    listFigure[listFigure.Count - 1].Mirror(e);
                     break;
             }
 
             pictureBox1.Image = bitmap;
         }
 
-        private void CheckBoxBeziers (object sender, EventArgs e) => haveBezies = checkBox2.Checked;
+        private void CheckBoxBeziers(object sender, EventArgs e) => haveBezies = checkBox2.Checked;
     }
 }

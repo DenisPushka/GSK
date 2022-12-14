@@ -1,5 +1,4 @@
 ﻿using _3_Laba_GSK.access;
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,33 +10,32 @@ namespace _3_Laba_GSK
     internal class Figure
     {
         private readonly List<MyPoint> points;
-        public List<MyPoint> GetPoints () => points;
+        public List<MyPoint> GetPoints() => points;
         private Graphics Graphics { get; }
-        public bool DoTmo { get; set; } = false;
-        private Pen DrawPenBorder { get; } = new Pen(Color.Orange, 5);
+        public bool DoTmo { get; set; }
         public bool IsFunction { get; set; }
 
-        public Figure (Graphics graphics)
+        public Figure(Graphics graphics)
         {
             Graphics = graphics;
             points = new List<MyPoint>();
         }
 
-        public Figure (List<MyPoint> points, Graphics graphics)
+        public Figure(List<MyPoint> points, Graphics graphics)
         {
             Graphics = graphics;
             this.points = points;
         }
 
-        public void AddPoint (MouseEventArgs e, Pen drawPen)
+        public void AddPoint(MouseEventArgs e, Pen drawPen)
         {
-            points.Add(new MyPoint { X = e.X, Y = e.Y });
+            points.Add(new MyPoint {X = e.X, Y = e.Y});
             if (points.Count > 1)
                 Graphics.DrawLine(drawPen, points[points.Count - 2].ToPoint(), points[points.Count - 1].ToPoint());
         }
 
         // Факториал
-        private static double Factorial (int n)
+        private static double Factorial(int n)
         {
             double x = 1;
             for (var i = 1; i <= n; i++)
@@ -45,12 +43,8 @@ namespace _3_Laba_GSK
             return x;
         }
 
-        private static double Polinom (int i, int n, float t) => Factorial(n) / (Factorial(i) * Factorial(n - i))
-                                                                * (float) Math.Pow(t, i) *
-                                                                (float) Math.Pow(1 - t, n - i);
-
         // Кривая Безье
-        public Figure DrawBezier (Pen drPen)
+        public Figure DrawBezier(Pen drPen)
         {
             const double dt = 0.01;
             var t = dt;
@@ -64,7 +58,8 @@ namespace _3_Laba_GSK
 
                 for (var i = 0; i < points.Count; i++)
                 {
-                    var b = Polinom(i, points.Count - 1, (float) t);
+                    var b = Factorial(points.Count - 1) / (Factorial(i) * Factorial(points.Count - 1 - i))
+                        * (float) Math.Pow(t, i) * (float) Math.Pow(1 - t, points.Count - 1 - i);
                     x += points[i].X * b;
                     y += points[i].Y * b;
                 }
@@ -81,12 +76,11 @@ namespace _3_Laba_GSK
         }
 
         // Клонирование точек фигуры
-        public List<MyPoint> Cloning () => points.ToList();
+        public List<MyPoint> Cloning() => points.ToList();
 
         // Алгоритм закрашивания внутри многоугольника
-        public void FillIn (Pen drawPen, int pictureBoxHeight, bool haveBorder)
+        public void FillIn(Pen drawPen, int pictureBoxHeight)
         {
-            PaintingLineInFigure(haveBorder);
             var arr = SearchYMinAndMax(pictureBoxHeight);
             var min = arr[0];
             var max = arr[1];
@@ -111,7 +105,7 @@ namespace _3_Laba_GSK
             }
         }
 
-        public Tuple2<List<float>, List<float>> CalculationListXrAndXl (int y)
+        public Tuple2<List<float>, List<float>> CalculationListXrAndXl(int y)
         {
             var k = 0;
             var xR = new List<float>();
@@ -148,13 +142,13 @@ namespace _3_Laba_GSK
         /// <summary>
         ///  Условие пересечения
         /// </summary>
-        private bool Check (int i, int k, int y) =>
+        private bool Check(int i, int k, int y) =>
             (points[i].Y < y && points[k].Y >= y) || (points[i].Y >= y && points[k].Y < y);
 
         /// <summary>
         ///  Проверка пересичения прямой Y c отрезком
         /// </summary>
-        private List<float> CheckIntersection (List<float> xs, int i, int k, int y)
+        private List<float> CheckIntersection(List<float> xs, int i, int k, int y)
         {
             if (Check(i, k, y))
             {
@@ -166,28 +160,14 @@ namespace _3_Laba_GSK
             return xs;
         }
 
-        /// <summary>
-        ///  Рисование сторон
-        /// </summary>
-        public void PaintingLineInFigure (bool haveBorder)
-        {
-            if (haveBorder && points.Count > 1)
-            {
-                for (var i = 0; i < points.Count - 1; i++)
-                    Graphics.DrawLine(DrawPenBorder, points[i].ToPoint(), points[i + 1].ToPoint());
-
-                Graphics.DrawLine(DrawPenBorder, points[0].ToPoint(), points[points.Count - 1].ToPoint());
-            }
-        }
-
-        public void PaintingLineInFigure (Pen drawPen)
+        public void PaintingLineInFigure(Pen drawPen)
         {
             for (var i = 0; i < points.Count - 1; i++)
                 Graphics.DrawLine(drawPen, points[i].ToPoint(), points[i + 1].ToPoint());
         }
 
         // Поиск мин/макс X
-        private float[] SearchXMinAndMax ()
+        private float[] SearchXMinAndMax()
         {
             var min = points[0].X;
             var max = 0.0f;
@@ -197,14 +177,14 @@ namespace _3_Laba_GSK
                 max = points[i].X > max ? points[i].X : max;
             }
 
-            return new[] { min, max };
+            return new[] {min, max};
         }
 
         // Поиск мин/макс Y
-        public float[] SearchYMinAndMax (int height)
+        public float[] SearchYMinAndMax(int height)
         {
             if (points.Count == 0)
-                return new float[] { 0, 0, 0 };
+                return new float[] {0, 0, 0};
 
             var min = points[0].Y;
             var max = points[0].Y;
@@ -223,10 +203,10 @@ namespace _3_Laba_GSK
 
             min = min < 0 ? 0 : min;
             max = max > height ? height : max;
-            return new[] { min, max, j };
+            return new[] {min, max, j};
         }
 
-        public bool ThisFigure (int mx, int my)
+        public bool ThisFigure(int mx, int my)
         {
             var m = 0;
             for (var i = 0; i <= points.Count - 1; i++)
@@ -242,12 +222,11 @@ namespace _3_Laba_GSK
             return m % 2 == 1;
         }
 
-        // TODO разобраться!!!!
-        public void Move (int dx, int dy)
+        public void Move(int dx, int dy)
         {
             for (var i = 0; i < points.Count; i++)
             {
-                var buffer = new MyPoint()
+                var buffer = new MyPoint
                 {
                     X = points[i].X + dx,
                     Y = points[i].Y + dy
@@ -256,7 +235,7 @@ namespace _3_Laba_GSK
             }
         }
 
-        private void ToAndFromCenter (bool start, MyPoint e)
+        private void ToAndFromCenter(bool start, MyPoint e)
         {
             if (start)
             {
@@ -282,7 +261,7 @@ namespace _3_Laba_GSK
             }
         }
 
-        private MyPoint CenterFigure (int height)
+        private MyPoint CenterFigure(int height)
         {
             var e = new MyPoint();
             var arrayY = SearchYMinAndMax(height);
@@ -295,16 +274,16 @@ namespace _3_Laba_GSK
         /// <summary>
         ///  Отражение
         /// </summary>
-        public void Mirror (int height, MouseEventArgs eventMouse)
+        public void Mirror(MouseEventArgs eventMouse)
         {
             var matrix = new float[,]
-                    {
-                        {-1, 0, 0},
-                        {0, -1, 0},
-                        {0, 0, 1}
-                    };
+            {
+                {-1, 0, 0},
+                {0, -1, 0},
+                {0, 0, 1}
+            };
 
-            var e = CenterFigure(height);
+            var e = new MyPoint(eventMouse.X, eventMouse.Y);
             ToAndFromCenter(true, e);
 
             for (var i = 0; i < points.Count; i++)
@@ -313,14 +292,14 @@ namespace _3_Laba_GSK
             ToAndFromCenter(false, e);
         }
 
-        public void Zoom (int height, float[] zoom, MouseEventArgs eventMouse)
+        public void Zoom(int height, float[] zoom)
         {
             if (zoom[0] <= 0) zoom[0] = -0.1f;
             if (zoom[1] <= 0) zoom[1] = -0.1f;
             if (zoom[0] >= 0) zoom[0] = 0.1f;
             if (zoom[1] >= 0) zoom[1] = 0.1f;
 
-            var sx = 1;
+            const int sx = 1;
             var sy = 1 + zoom[1];
             float[,] matrix =
             {
@@ -329,7 +308,7 @@ namespace _3_Laba_GSK
                 {0, 0, 1}
             };
 
-            var e = new MyPoint(eventMouse.X, eventMouse.Y);
+            var e = CenterFigure(height);
 
             ToAndFromCenter(true, e);
 
@@ -341,7 +320,7 @@ namespace _3_Laba_GSK
 
         private int updateAlpha;
 
-        public void Rotation (int mouse, int height, TextBox textBox2, MouseEventArgs eventMouse)
+        public void Rotation(int mouse, TextBox textBox2, MouseEventArgs eventMouse)
         {
             float alpha = 0;
             if (mouse > 0)
@@ -371,36 +350,5 @@ namespace _3_Laba_GSK
 
             ToAndFromCenter(false, e);
         }
-
-        #region Читерский вывод
-
-        // Вывод многоугольнкиа с помощью FillPolygon
-        private void PaintingFirstToAlgorithm (Graphics graphics, Pen drawPen)
-        {
-            var pgVertex = new Point[points.Count];
-            for (var i = 0; i < points.Count; i++)
-            {
-                pgVertex[i].X = (int) points[i].X;
-                pgVertex[i].Y = (int) points[i].Y;
-            }
-
-            graphics.FillPolygon(new SolidBrush(drawPen.Color), pgVertex);
-        }
-
-        // Вывод многоугольнкиа вне с помощью FillPolygon
-        private void PaintingSecondToAlgorithm (Graphics graphics, Pen drawPen)
-        {
-            graphics.Clear(drawPen.Color);
-            var pgVertex = new Point[points.Count];
-            for (var i = 0; i < points.Count; i++)
-            {
-                pgVertex[i].X = (int) points[i].X;
-                pgVertex[i].Y = (int) points[i].Y;
-            }
-
-            graphics.FillPolygon(new SolidBrush(new Pen(Color.White).Color), pgVertex);
-        }
-
-        #endregion
     }
 }

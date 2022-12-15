@@ -9,19 +9,19 @@ namespace _3_Laba_GSK
 {
     internal class Figure
     {
-        private readonly List<MyPoint> points;
-        public List<MyPoint> GetPoints() => points;
+        private readonly List<PointF> points;
+        public List<PointF> GetPoints() => points;
         private Graphics Graphics { get; }
-        public bool DoTmo { get; set; }
+        public bool HaveTmo { get; set; }
         public bool IsFunction { get; set; }
 
         public Figure(Graphics graphics)
         {
             Graphics = graphics;
-            points = new List<MyPoint>();
+            points = new List<PointF>();
         }
 
-        public Figure(List<MyPoint> points, Graphics graphics)
+        public Figure(List<PointF> points, Graphics graphics)
         {
             Graphics = graphics;
             this.points = points;
@@ -29,7 +29,7 @@ namespace _3_Laba_GSK
 
         public void AddPoint(MouseEventArgs e, Pen drawPen)
         {
-            points.Add(new MyPoint {X = e.X, Y = e.Y});
+            points.Add(new PointF {X = e.X, Y = e.Y});
             if (points.Count > 1)
                 Graphics.DrawLine(drawPen, points[points.Count - 2].ToPoint(), points[points.Count - 1].ToPoint());
         }
@@ -50,7 +50,7 @@ namespace _3_Laba_GSK
             var t = dt;
             double xPred = points[0].X;
             double yPred = points[0].Y;
-            var fig = new List<MyPoint>();
+            var fig = new List<PointF>();
             while (t < 1)
             {
                 double x = 0;
@@ -59,12 +59,12 @@ namespace _3_Laba_GSK
                 for (var i = 0; i < points.Count; i++)
                 {
                     var b = Factorial(points.Count - 1) / (Factorial(i) * Factorial(points.Count - 1 - i))
-                        * (float) Math.Pow(t, i) * (float) Math.Pow(1 - t, points.Count - 1 - i);
+                            * (float) Math.Pow(t, i) * (float) Math.Pow(1 - t, points.Count - 1 - i);
                     x += points[i].X * b;
                     y += points[i].Y * b;
                 }
 
-                fig.Add(new MyPoint((float) x, (float) y));
+                fig.Add(new PointF((float) x, (float) y));
                 Graphics.DrawLine(drPen, new Point((int) xPred, (int) yPred), new Point((int) x, (int) y));
                 t += dt;
                 xPred = x;
@@ -76,7 +76,7 @@ namespace _3_Laba_GSK
         }
 
         // Клонирование точек фигуры
-        public List<MyPoint> Cloning() => points.ToList();
+        public List<PointF> Cloning() => points.ToList();
 
         // Алгоритм закрашивания внутри многоугольника
         public void FillIn(Pen drawPen, int pictureBoxHeight)
@@ -105,7 +105,7 @@ namespace _3_Laba_GSK
             }
         }
 
-        public Tuple2<List<float>, List<float>> CalculationListXrAndXl(int y)
+        public List<float>[] CalculationListXrAndXl(int y)
         {
             var k = 0;
             var xR = new List<float>();
@@ -136,7 +136,7 @@ namespace _3_Laba_GSK
                     xL.Add(x);
             }
 
-            return new Tuple2<List<float>, List<float>>(xL, xR);
+            return new[] {xL, xR};
         }
 
         /// <summary>
@@ -222,20 +222,7 @@ namespace _3_Laba_GSK
             return m % 2 == 1;
         }
 
-        public void Move(int dx, int dy)
-        {
-            for (var i = 0; i < points.Count; i++)
-            {
-                var buffer = new MyPoint
-                {
-                    X = points[i].X + dx,
-                    Y = points[i].Y + dy
-                };
-                points[i] = buffer;
-            }
-        }
-
-        private void ToAndFromCenter(bool start, MyPoint e)
+        private void ToAndFromCenter(bool start, PointF e)
         {
             if (start)
             {
@@ -261,9 +248,9 @@ namespace _3_Laba_GSK
             }
         }
 
-        private MyPoint CenterFigure(int height)
+        private PointF CenterFigure(int height)
         {
-            var e = new MyPoint();
+            var e = new PointF();
             var arrayY = SearchYMinAndMax(height);
             var arrayX = SearchXMinAndMax();
             e.X = (arrayX[0] + arrayX[1]) / 2;
@@ -283,7 +270,7 @@ namespace _3_Laba_GSK
                 {0, 0, 1}
             };
 
-            var e = new MyPoint(eventMouse.X, eventMouse.Y);
+            var e = new PointF(eventMouse.X, eventMouse.Y);
             ToAndFromCenter(true, e);
 
             for (var i = 0; i < points.Count; i++)
@@ -336,7 +323,7 @@ namespace _3_Laba_GSK
 
             textBox2.Text = updateAlpha.ToString();
 
-            var e = new MyPoint(eventMouse.X, eventMouse.Y);
+            var e = new PointF(eventMouse.X, eventMouse.Y);
             ToAndFromCenter(true, e);
 
             float[,] matrixRotation =

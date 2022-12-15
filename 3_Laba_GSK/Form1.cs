@@ -8,13 +8,7 @@ namespace _3_Laba_GSK
 {
     public partial class Form1 : Form
     {
-        private enum Fill
-        {
-            In,
-            Out
-        }
-
-        private enum FigureEnum
+        private enum Figures
         {
             Cross,
             Star
@@ -46,14 +40,9 @@ namespace _3_Laba_GSK
         #region To select a user
 
         /// <summary>
-        ///  Выбор алгоритма закрашивания фигуры (заливка)
-        /// </summary>
-        private readonly Fill fill = Fill.In;
-
-        /// <summary>
         /// Выбор фигуры для рисования
         /// </summary>
-        private FigureEnum figureEnum;
+        private Figures figures;
 
         /// <summary>
         ///  Множество для ТМО
@@ -64,11 +53,6 @@ namespace _3_Laba_GSK
         ///  Выбор цвета закрашивания фигуры
         /// </summary>
         private readonly Pen drawPen = new Pen(Color.Black, 1);
-
-        /// <summary>
-        ///  Проверка на рисование сторон
-        /// </summary>
-        private bool haveBorder;
 
         /// <summary>
         ///  Проверка на кривой Безье
@@ -87,12 +71,7 @@ namespace _3_Laba_GSK
 
         #endregion
 
-        #region For move figure
-
         private bool checkFigure;
-        private Point pictureBoxMousePosition;
-
-        #endregion
 
         public Form1()
         {
@@ -108,7 +87,6 @@ namespace _3_Laba_GSK
         // Обработчик события
         private void PictureMouseDown(object sender, MouseEventArgs e)
         {
-            pictureBoxMousePosition = e.Location;
             switch (operation)
             {
                 // Зарисовка
@@ -145,14 +123,12 @@ namespace _3_Laba_GSK
         // Обработчик события
         private void PictureBoxMouseMove(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && operation == 1 & checkFigure)
-                MoveFigure(e);
         }
 
         private void GeometricTransformation(object sender, MouseEventArgs e)
         {
             var figureBuff = listFigure[listFigure.Count - 1];
-            if (figureBuff.DoTmo)
+            if (figureBuff.HaveTmo)
             {
                 TG(figureBuff, e);
                 TG(listFigure[listFigure.Count - 2], e);
@@ -191,23 +167,14 @@ namespace _3_Laba_GSK
                 checkFigure = false;
         }
 
-        private void MoveFigure(MouseEventArgs e)
-        {
-            listFigure[listFigure.Count - 1].Move(e.X - pictureBoxMousePosition.X, e.Y - pictureBoxMousePosition.Y);
-            graphics.Clear(pictureBox1.BackColor);
-            listFigure[listFigure.Count - 1].FillIn(drawPen, pictureBox1.Height);
-            pictureBox1.Image = bitmap;
-            pictureBoxMousePosition = e.Location;
-        }
-
         private void Create(MouseEventArgs e)
         {
-            switch (figureEnum)
+            switch (figures)
             {
-                case FigureEnum.Cross:
+                case Figures.Cross:
                     CreateCross(e);
                     break;
-                case FigureEnum.Star:
+                case Figures.Star:
                     CreateStar(e);
                     break;
                 default:
@@ -243,18 +210,18 @@ namespace _3_Laba_GSK
             var figure2 = listFigure[listFigure.Count - 1];
             var arr = figure1.SearchYMinAndMax(pictureBox1.Height);
             var arr2 = figure2.SearchYMinAndMax(pictureBox1.Height);
-            figure1.DoTmo = true;
-            figure2.DoTmo = true;
+            figure1.HaveTmo = true;
+            figure2.HaveTmo = true;
             var minY = arr[0] < arr2[0] ? arr[0] : arr2[0];
             var maxY = arr[1] > arr2[1] ? arr[1] : arr2[1];
             for (var Y = (int) minY; Y < maxY; Y++)
             {
                 var A = figure1.CalculationListXrAndXl(Y);
-                List<float> xAl = A.First;
-                List<float> xAr = A.Second;
+                List<float> xAl = A[0];
+                List<float> xAr = A[1];
                 var B = figure2.CalculationListXrAndXl(Y);
-                List<float> xBl = B.First;
-                List<float> xBr = B.Second;
+                List<float> xBl = B[0];
+                List<float> xBr = B[1];
                 if (xAl.Count == 0 && xBl.Count == 0)
                     continue;
 
@@ -280,7 +247,7 @@ namespace _3_Laba_GSK
                 #endregion
 
                 // Сортировка
-                SortArrayM();
+                SortM();
 
                 var Q = 0;
                 var xrl = new List<int>();
@@ -319,7 +286,7 @@ namespace _3_Laba_GSK
         /// <summary>
         ///  Сортировка по Х
         /// </summary>
-        private void SortArrayM()
+        private void SortM()
         {
             for (var write = 0; write < arrayM.Length; write++)
             for (var sort = 0; sort < arrayM.Length - 1; sort++)
@@ -331,24 +298,23 @@ namespace _3_Laba_GSK
                 }
         }
 
-        #region Создание фигур
 
         private void CreateCross(MouseEventArgs e)
         {
-            var cross = new List<MyPoint>
+            var cross = new List<PointF>
             {
-                new MyPoint(e.X - 150, e.Y - 50),
-                new MyPoint(e.X - 50, e.Y - 50),
-                new MyPoint(e.X - 50, e.Y - 150),
-                new MyPoint(e.X + 50, e.Y - 150),
-                new MyPoint(e.X + 50, e.Y - 50),
-                new MyPoint(e.X + 150, e.Y - 50),
-                new MyPoint(e.X + 150, e.Y + 50),
-                new MyPoint(e.X + 50, e.Y + 50),
-                new MyPoint(e.X + 50, e.Y + 150),
-                new MyPoint(e.X - 50, e.Y + 150),
-                new MyPoint(e.X - 50, e.Y + 50),
-                new MyPoint(e.X - 150, e.Y + 50),
+                new PointF(e.X - 150, e.Y - 50),
+                new PointF(e.X - 50, e.Y - 50),
+                new PointF(e.X - 50, e.Y - 150),
+                new PointF(e.X + 50, e.Y - 150),
+                new PointF(e.X + 50, e.Y - 50),
+                new PointF(e.X + 150, e.Y - 50),
+                new PointF(e.X + 150, e.Y + 50),
+                new PointF(e.X + 50, e.Y + 50),
+                new PointF(e.X + 50, e.Y + 150),
+                new PointF(e.X - 50, e.Y + 150),
+                new PointF(e.X - 50, e.Y + 50),
+                new PointF(e.X - 150, e.Y + 50),
             };
             figure = new Figure(cross, graphics);
         }
@@ -359,18 +325,16 @@ namespace _3_Laba_GSK
             const double r = 50;
             const double d = 0;
             double a = d, da = Math.PI / angleCount;
-            var star = new List<MyPoint>();
+            var star = new List<PointF>();
             for (var k = 0; k < 2 * angleCount + 1; k++)
             {
                 var l = k % 2 == 0 ? r : R;
-                star.Add(new MyPoint((int) (e.X + l * Math.Cos(a)), (int) (e.Y + l * Math.Sin(a))));
+                star.Add(new PointF((int) (e.X + l * Math.Cos(a)), (int) (e.Y + l * Math.Sin(a))));
                 a += da;
             }
 
             figure = new Figure(star, graphics);
         }
-
-        #endregion
 
         #region Выбор пользователя
 
@@ -380,10 +344,10 @@ namespace _3_Laba_GSK
             switch (comboBox3.SelectedIndex)
             {
                 case 0:
-                    figureEnum = FigureEnum.Cross;
+                    figures = Figures.Cross;
                     break;
                 case 1:
-                    figureEnum = FigureEnum.Star;
+                    figures = Figures.Star;
                     break;
             }
 
@@ -411,7 +375,9 @@ namespace _3_Laba_GSK
         }
 
         // Имеют ли фигуры границы
-        private void ComboBox_HaveBorder(object sender, EventArgs e) => haveBorder = checkBox1.Checked;
+        private void ComboBox_HaveBorder(object sender, EventArgs e)
+        {
+        }
 
         // Выбор ТМО
         private void ComboBox_SelectTMO(object sender, EventArgs e)
@@ -474,14 +440,10 @@ namespace _3_Laba_GSK
         private void DoMirror(object sender, MouseEventArgs e)
         {
             if (listFigure.Count == 0) return;
-
-            switch (operation)
-            {
-                // Отражение
-                case 3:
-                    listFigure[listFigure.Count - 1].Mirror(e);
-                    break;
-            }
+            
+            // Отражение
+            if (operation == 3) 
+                listFigure[listFigure.Count - 1].Mirror(e);
 
             pictureBox1.Image = bitmap;
         }

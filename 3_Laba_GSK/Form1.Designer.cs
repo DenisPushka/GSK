@@ -29,7 +29,6 @@ namespace _3_Laba_GSK
         /// </summary>
         private void InitializeComponent()
         {
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
@@ -42,26 +41,14 @@ namespace _3_Laba_GSK
             this.comboBox5 = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
             this.comboBox4 = new System.Windows.Forms.ComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(1047, 83);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(97, 17);
-            this.checkBox1.TabIndex = 0;
-            this.checkBox1.Text = "Вывод границ";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.ComboBox_HaveBorder);
             // 
             // button1
             // 
             this.button1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.button1.Location = new System.Drawing.Point(1056, 50);
+            this.button1.Location = new System.Drawing.Point(888, 81);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -87,12 +74,8 @@ namespace _3_Laba_GSK
             // 
             this.comboBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Черный",
-            "Красный",
-            "Зеленый",
-            "Синий"});
-            this.comboBox1.Location = new System.Drawing.Point(320, 79);
+            this.comboBox1.Items.AddRange(new object[] {"Черный", "Красный", "Зеленый", "Синий"});
+            this.comboBox1.Location = new System.Drawing.Point(341, 50);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(150, 21);
             this.comboBox1.TabIndex = 3;
@@ -103,10 +86,8 @@ namespace _3_Laba_GSK
             // 
             this.comboBox3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Items.AddRange(new object[] {
-            "Крест",
-            "Звезда"});
-            this.comboBox3.Location = new System.Drawing.Point(856, 50);
+            this.comboBox3.Items.AddRange(new object[] {"Крест", "Звезда"});
+            this.comboBox3.Location = new System.Drawing.Point(853, 23);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(150, 21);
             this.comboBox3.TabIndex = 5;
@@ -128,7 +109,6 @@ namespace _3_Laba_GSK
             this.panel1.Controls.Add(this.comboBox3);
             this.panel1.Controls.Add(this.comboBox1);
             this.panel1.Controls.Add(this.button1);
-            this.panel1.Controls.Add(this.checkBox1);
             this.panel1.Location = new System.Drawing.Point(23, 634);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1395, 177);
@@ -166,11 +146,7 @@ namespace _3_Laba_GSK
             // comboBox6
             // 
             this.comboBox6.FormattingEnabled = true;
-            this.comboBox6.Items.AddRange(new object[] {
-            "Закрашивание",
-            "Вращение относительно заданного центра",
-            "Масштабирование по OY",
-            "Отражение относительно заданного центра"});
+            this.comboBox6.Items.AddRange(new object[] {"Закрашивание", "Вращение относительно заданного центра", "Масштабирование по OY", "Отражение относительно заданного центра"});
             this.comboBox6.Location = new System.Drawing.Point(560, 23);
             this.comboBox6.Name = "comboBox6";
             this.comboBox6.Size = new System.Drawing.Size(271, 21);
@@ -181,24 +157,8 @@ namespace _3_Laba_GSK
             // comboBox5
             // 
             this.comboBox5.FormattingEnabled = true;
-            this.comboBox5.Items.AddRange(new object[] {
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20"});
-            this.comboBox5.Location = new System.Drawing.Point(873, 81);
+            this.comboBox5.Items.AddRange(new object[] {"5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"});
+            this.comboBox5.Location = new System.Drawing.Point(870, 54);
             this.comboBox5.Name = "comboBox5";
             this.comboBox5.Size = new System.Drawing.Size(121, 21);
             this.comboBox5.TabIndex = 8;
@@ -220,10 +180,7 @@ namespace _3_Laba_GSK
             // 
             this.comboBox4.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Items.AddRange(new object[] {
-            "Объединение",
-            "Разность А\\В",
-            "Разность В\\А"});
+            this.comboBox4.Items.AddRange(new object[] {"Объединение", "Разность А\\В", "Разность В\\А"});
             this.comboBox4.Location = new System.Drawing.Point(603, 50);
             this.comboBox4.Name = "comboBox4";
             this.comboBox4.Size = new System.Drawing.Size(175, 21);
@@ -246,17 +203,15 @@ namespace _3_Laba_GSK
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Click += new System.EventHandler(this.Form1_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureMouseDown);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBox1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
 
-        private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ComboBox comboBox1;

@@ -31,39 +31,32 @@ namespace _3_Laba_GSK
         ///  Спец фигура формируется
         /// </summary>
         private bool isSpecialFigureBeingFormed;
-
         /// <summary>
         ///  Буффер
         /// </summary>
         private readonly Bitmap bitmap;
-
         #region To select a user
-
+        
         /// <summary>
         /// Выбор фигуры для рисования
         /// </summary>
         private Figures figures;
-
         /// <summary>
         ///  Множество для ТМО
         /// </summary>
         private readonly int[] setQ = new int[2];
-
         /// <summary>
         ///  Выбор цвета закрашивания фигуры
         /// </summary>
         private readonly Pen drawPen = new Pen(Color.Black, 1);
-
         /// <summary>
         ///  Проверка на кривой Безье
         /// </summary>
         private bool haveBezies;
-
         /// <summary>
         ///  Количество углов
         /// </summary>
         private int angleCount;
-
         /// <summary>
         ///  Выбор операции
         /// </summary>
@@ -154,7 +147,6 @@ namespace _3_Laba_GSK
                 figureBuff.FillIn(drawPen, pictureBox1.Height);
             pictureBox1.Image = bitmap;
         }
-
 
         private void ThisFigure(MouseEventArgs e)
         {
@@ -298,7 +290,6 @@ namespace _3_Laba_GSK
                 }
         }
 
-
         private void CreateCross(MouseEventArgs e)
         {
             var cross = new List<PointF>
@@ -341,15 +332,10 @@ namespace _3_Laba_GSK
         // Выбираем фигуру
         private void ComboBox_SelectFigure(object sender, EventArgs e)
         {
-            switch (comboBox3.SelectedIndex)
-            {
-                case 0:
-                    figures = Figures.Cross;
-                    break;
-                case 1:
-                    figures = Figures.Star;
-                    break;
-            }
+            if (comboBox3.SelectedIndex == 0)
+                figures = Figures.Cross;
+            else if (comboBox3.SelectedIndex == 1) 
+                figures = Figures.Star;
 
             isSpecialFigureBeingFormed = true;
         }
@@ -372,11 +358,6 @@ namespace _3_Laba_GSK
                     drawPen.Color = Color.Blue;
                     break;
             }
-        }
-
-        // Имеют ли фигуры границы
-        private void ComboBox_HaveBorder(object sender, EventArgs e)
-        {
         }
 
         // Выбор ТМО
@@ -440,9 +421,9 @@ namespace _3_Laba_GSK
         private void DoMirror(object sender, MouseEventArgs e)
         {
             if (listFigure.Count == 0) return;
-            
+
             // Отражение
-            if (operation == 3) 
+            if (operation == 3)
                 listFigure[listFigure.Count - 1].Mirror(e);
 
             pictureBox1.Image = bitmap;

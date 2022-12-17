@@ -139,7 +139,7 @@ namespace _3_Laba_GSK
                     }
                     break;
                 default:
-                    ThisFugure(e);
+                    ThisFigure(e);
                     break;
             }
 
@@ -166,16 +166,22 @@ namespace _3_Laba_GSK
             }
             else
                 TG(figureBuff, e);
-
         }
-
 
         private void TG (Figure figureBuff, MouseEventArgs e)
         {
-            if (operation == 2 || operation == 3)
-                figureBuff.Rotation(e.Delta, pictureBox1.Height, textBox2, e, operation);
-            else if (operation == 4 || operation == 5 || operation == 6)
-                figureBuff.Zoom(pictureBox1.Height, new float[] { e.Delta, e.Delta }, operation, e);
+            switch (operation)
+            {
+                case 2:
+                case 3:
+                    figureBuff.Rotation(e.Delta, pictureBox1.Height, textBox2, e, operation);
+                    break;
+                case 4:
+                case 5:
+                case 6:
+                    figureBuff.Zoom(pictureBox1.Height, new float[] { e.Delta, e.Delta }, operation, e);
+                    break;
+            }
 
             graphics.Clear(pictureBox1.BackColor);
             if (figureBuff.IsFunction)
@@ -185,8 +191,7 @@ namespace _3_Laba_GSK
             pictureBox1.Image = bitmap;
         }
 
-
-        private void ThisFugure (MouseEventArgs e)
+        private void ThisFigure (MouseEventArgs e)
         {
             if (listFigure[listFigure.Count - 1].ThisFigure(e.X, e.Y))
             {
@@ -344,26 +349,21 @@ namespace _3_Laba_GSK
         /// </summary>
         private void SortArrayM ()
         {
-            _ = new M(0, 0);
             for (var write = 0; write < arrayM.Length; write++)
-            {
-                for (var sort = 0; sort < arrayM.Length - 1; sort++)
+            for (var sort = 0; sort < arrayM.Length - 1; sort++)
+                if (arrayM[sort].X > arrayM[sort + 1].X)
                 {
-                    if (arrayM[sort].X > arrayM[sort + 1].X)
-                    {
-                        var buuf = new M(arrayM[sort + 1].X, arrayM[sort + 1].Dq);
-                        arrayM[sort + 1] = arrayM[sort];
-                        arrayM[sort] = buuf;
-                    }
+                    var buuf = new M(arrayM[sort + 1].X, arrayM[sort + 1].Dq);
+                    arrayM[sort + 1] = arrayM[sort];
+                    arrayM[sort] = buuf;
                 }
-            }
         }
 
         #region Создание фигур
 
         private void CreateTriangle (MouseEventArgs e)
         {
-            var triangle = new List<MyPoint>()
+            var triangle = new List<MyPoint>
             {
                 new MyPoint(e.X, e.Y - 200),
                 new MyPoint(e.X + 200, e.Y + 100),
@@ -374,7 +374,7 @@ namespace _3_Laba_GSK
 
         private void CreateFlag (MouseEventArgs e)
         {
-            var flag = new List<MyPoint>()
+            var flag = new List<MyPoint>
             {
                 new MyPoint(e.X - 250, e.Y - 150),
                 new MyPoint(e.X + 250, e.Y - 150),
@@ -387,7 +387,7 @@ namespace _3_Laba_GSK
 
         private void CreateUgl1 (MouseEventArgs e)
         {
-            var ugl1 = new List<MyPoint>()
+            var ugl1 = new List<MyPoint>
             {
                 new MyPoint(e.X - 150, e.Y - 150),
                 new MyPoint(e.X + 150, e.Y - 150),
@@ -401,7 +401,7 @@ namespace _3_Laba_GSK
 
         private void CreateUgl2 (MouseEventArgs e)
         {
-            var ugl2 = new List<MyPoint>()
+            var ugl2 = new List<MyPoint>
             {
                 new MyPoint(e.X - 150, e.Y - 150),
                 new MyPoint(e.X, e.Y - 150),
@@ -415,7 +415,7 @@ namespace _3_Laba_GSK
 
         private void CreateBox (MouseEventArgs e)
         {
-            var box = new List<MyPoint>()
+            var box = new List<MyPoint>
             {
                 new MyPoint(e.X - 150, e.Y - 150),
                 new MyPoint(e.X + 150, e.Y - 150),

@@ -337,5 +337,18 @@ namespace _3_Laba_GSK
 
             ToAndFromCenter(false, e);
         }
+
+        public void Move (int dx, int dy)
+        {
+            for (var i = 0; i <= points.Count - 1; i++)
+            {
+                var buffer = new PointF
+                {
+                    X = points[i].X + dx,
+                    Y = points[i].Y + dy
+                };
+                points[i] = buffer;
+            }
+        }
     }
 }

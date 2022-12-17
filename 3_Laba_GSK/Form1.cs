@@ -20,7 +20,7 @@ namespace _3_Laba_GSK
         /// <summary>
         ///  Список фигур
         /// </summary>
-        private readonly List<Figure> listFigure = new List<Figure>();
+        private readonly List<Figure> figures = new List<Figure>();
 
         /// <summary>
         ///  Массив для совместной обработки исходных границ сегмента
@@ -40,7 +40,7 @@ namespace _3_Laba_GSK
         /// <summary>
         /// Выбор фигуры для рисования
         /// </summary>
-        private Figures figures;
+        private Figures figureEnum;
         /// <summary>
         ///  Множество для ТМО
         /// </summary>
@@ -65,6 +65,7 @@ namespace _3_Laba_GSK
         #endregion
 
         private bool checkFigure;
+        private Point pictureBoxMousePosition;
 
         public Form1()
         {
@@ -80,6 +81,7 @@ namespace _3_Laba_GSK
         // Обработчик события
         private void PictureMouseDown(object sender, MouseEventArgs e)
         {
+            pictureBoxMousePosition = e.Location;
             switch (operation)
             {
                 // Зарисовка
@@ -91,11 +93,13 @@ namespace _3_Laba_GSK
                         FillIncl();
                         isSpecialFigureBeingFormed = false;
                     }
+                    else if (operation == 4 && figures.Count != 0)
+                        ThisFigure(e);
                     else if (e.Button == MouseButtons.Right && haveBezies)
                     {
                         figure = figure.DrawBezier(drawPen);
-                        listFigure.Add(CloningFigure());
-                        listFigure[listFigure.Count - 1].IsFunction = true;
+                        figures.Add(CloningFigure());
+                        figures[figures.Count - 1].IsFunction = true;
                         figure.GetPoints().Clear();
                     }
                     else if (e.Button == MouseButtons.Right)
@@ -116,15 +120,17 @@ namespace _3_Laba_GSK
         // Обработчик события
         private void PictureBoxMouseMove(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Left && operation == 4 & checkFigure)
+                MoveFigure(e);
         }
 
         private void GeometricTransformation(object sender, MouseEventArgs e)
         {
-            var figureBuff = listFigure[listFigure.Count - 1];
+            var figureBuff = figures[figures.Count - 1];
             if (figureBuff.HaveTmo)
             {
                 TG(figureBuff, e);
-                TG(listFigure[listFigure.Count - 2], e);
+                TG(figures[figures.Count - 2], e);
                 graphics.Clear(Color.White);
                 Tmo();
                 pictureBox1.Image = bitmap;
@@ -150,7 +156,7 @@ namespace _3_Laba_GSK
 
         private void ThisFigure(MouseEventArgs e)
         {
-            if (listFigure[listFigure.Count - 1].ThisFigure(e.X, e.Y))
+            if (figures[figures.Count - 1].ThisFigure(e.X, e.Y))
             {
                 graphics.DrawEllipse(new Pen(Color.Blue), e.X - 2, e.Y - 2, 10, 10);
                 checkFigure = true;
@@ -158,10 +164,19 @@ namespace _3_Laba_GSK
             else
                 checkFigure = false;
         }
+        
+        private void MoveFigure (MouseEventArgs e)
+        {
+            figures[figures.Count - 1].Move(e.X - pictureBoxMousePosition.X, e.Y - pictureBoxMousePosition.Y);
+            graphics.Clear(pictureBox1.BackColor);
+            figures[figures.Count - 1].FillIn(drawPen, pictureBox1.Height);
+            pictureBox1.Image = bitmap;
+            pictureBoxMousePosition = e.Location;
+        }
 
         private void Create(MouseEventArgs e)
         {
-            switch (figures)
+            switch (figureEnum)
             {
                 case Figures.Cross:
                     CreateCross(e);
@@ -177,7 +192,7 @@ namespace _3_Laba_GSK
         private void FillIncl()
         {
             figure.FillIn(drawPen, pictureBox1.Height);
-            listFigure.Add(CloningFigure());
+            figures.Add(CloningFigure());
             figure.GetPoints().Clear();
             pictureBox1.Image = bitmap;
         }
@@ -186,7 +201,7 @@ namespace _3_Laba_GSK
 
         private void CheckWorkTmo()
         {
-            if (listFigure.Count > 1)
+            if (figures.Count > 1)
             {
                 graphics.Clear(Color.White);
                 Tmo();
@@ -198,8 +213,8 @@ namespace _3_Laba_GSK
         // Алгоритм теоретико-множественных операций
         private void Tmo()
         {
-            var figure1 = listFigure[listFigure.Count - 2];
-            var figure2 = listFigure[listFigure.Count - 1];
+            var figure1 = figures[figures.Count - 2];
+            var figure2 = figures[figures.Count - 1];
             var arr = figure1.SearchYMinAndMax(pictureBox1.Height);
             var arr2 = figure2.SearchYMinAndMax(pictureBox1.Height);
             figure1.HaveTmo = true;
@@ -333,9 +348,9 @@ namespace _3_Laba_GSK
         private void ComboBox_SelectFigure(object sender, EventArgs e)
         {
             if (comboBox3.SelectedIndex == 0)
-                figures = Figures.Cross;
+                figureEnum = Figures.Cross;
             else if (comboBox3.SelectedIndex == 1) 
-                figures = Figures.Star;
+                figureEnum = Figures.Star;
 
             isSpecialFigureBeingFormed = true;
         }
@@ -391,7 +406,7 @@ namespace _3_Laba_GSK
             figure.GetPoints().Clear();
             pictureBox1.Image = bitmap;
             graphics.Clear(Color.White);
-            listFigure.Clear();
+            figures.Clear();
             operation = 0;
         }
 
@@ -420,11 +435,11 @@ namespace _3_Laba_GSK
         /// </summary>
         private void DoMirror(object sender, MouseEventArgs e)
         {
-            if (listFigure.Count == 0) return;
+            if (figures.Count == 0) return;
 
             // Отражение
             if (operation == 3)
-                listFigure[listFigure.Count - 1].Mirror(e);
+                figures[figures.Count - 1].Mirror(e);
 
             pictureBox1.Image = bitmap;
         }

@@ -146,7 +146,7 @@ namespace _3_Laba_GSK
             // comboBox6
             // 
             this.comboBox6.FormattingEnabled = true;
-            this.comboBox6.Items.AddRange(new object[] {"Закрашивание", "Вращение относительно заданного центра", "Масштабирование по OY", "Отражение относительно заданного центра"});
+            this.comboBox6.Items.AddRange(new object[] {"Закрашивание", "Вращение относительно заданного центра", "Масштабирование по OY", "Отражение относительно заданного центра", "Перемещение"});
             this.comboBox6.Location = new System.Drawing.Point(560, 23);
             this.comboBox6.Name = "comboBox6";
             this.comboBox6.Size = new System.Drawing.Size(271, 21);

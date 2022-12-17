@@ -404,9 +404,9 @@ namespace _3_Laba_GSK
         private void Button_Clear(object sender, EventArgs e)
         {
             figure.GetPoints().Clear();
-            pictureBox1.Image = bitmap;
             graphics.Clear(Color.White);
             figures.Clear();
+            pictureBox1.Image = bitmap;
             operation = 0;
         }
 

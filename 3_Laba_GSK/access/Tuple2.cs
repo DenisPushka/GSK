@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace _3_Laba_GSK
 {
-    internal class Tuple2<T, TK>
+    public class Tuple2<T, TK>
     {
         public T First { get; }
         public TK Second { get; }

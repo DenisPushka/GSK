@@ -7,83 +7,56 @@ using System.Windows.Forms;
 
 namespace _3_Laba_GSK
 {
-    internal class Figure
+    public class Figure
     {
         private readonly List<MyPoint> points;
         public List<MyPoint> GetPoints() => points;
-        public bool IsFunction { get; set; } = false;
-        public bool DoTmo { get; set; } = false;
+        public bool IsFunction { get; set; }
+        public bool DoTmo { get; set; }
+        
+        
         private Graphics Graphics { get; }
+        private Pen DrawPen { get; set; }
         private Pen DrawPenBorder { get; } = new Pen(Color.Orange, 5);
+        private int width;
+        private int height;
 
-        public Figure(Graphics graphics)
+        public Figure(Graphics graphics, Pen drawPen, int height, int width)
         {
             Graphics = graphics;
             points = new List<MyPoint>();
+            DrawPen = drawPen;
+            this.height = height;
+            this.width = width;
         }
 
-        public Figure(List<MyPoint> points, Graphics graphics)
+        public Figure(List<MyPoint> points, Graphics graphics, Pen drawPen, int height, int width)
         {
             Graphics = graphics;
             this.points = points;
+            DrawPen = drawPen;
+            this.height = height;
+            this.width = width;
         }
 
-        public void AddPoint(MouseEventArgs e, Pen drawPen)
+        public void AddPoint(float x, float y)
         {
-            points.Add(new MyPoint {X = e.X, Y = e.Y});
+            points.Add(new MyPoint {X = x, Y = y});
             if (points.Count > 1)
-                Graphics.DrawLine(drawPen, points[points.Count - 2].ToPoint(), points[points.Count - 1].ToPoint());
-        }
-
-        // Факториал
-        double Factorial(int n)
-        {
-            double x = 1;
-            for (var i = 1; i <= n; i++)
-                x *= i;
-            return x;
-        }
-
-        private double Polinom(int i, int n, float t) => Factorial(n) / (Factorial(i) * Factorial(n - i))
-                                                         * (float) Math.Pow(t, i) * (float) Math.Pow(1 - t, n - i);
-
-        // Кривая Безье
-        public Figure DrawBezier(Pen drPen)
-        {
-            const double dt = 0.01;
-            var t = dt;
-            double xPred = points[0].X;
-            double yPred = points[0].Y;
-            var fig = new List<MyPoint>();
-            while (t < 1)
-            {
-                double x = 0;
-                double y = 0;
-
-                for (var i = 0; i < points.Count; i++)
-                {
-                    var b = Polinom(i, points.Count - 1, (float) t);
-                    x += points[i].X * b;
-                    y += points[i].Y * b;
-                }
-
-                fig.Add(new MyPoint((float) x, (float) y));
-                Graphics.DrawLine(drPen, new Point((int) xPred, (int) yPred), new Point((int) x, (int) y));
-                t += dt;
-                xPred = x;
-                yPred = y;
-            }
-
-            points.Clear();
-            return new Figure(fig, Graphics);
+                Graphics.DrawLine(DrawPen, points[points.Count - 2].ToPoint(), points[points.Count - 1].ToPoint());
         }
 
         // Клонирование фигуры
-        public List<MyPoint> Cloning() => points.ToList();
+        public Figure Cloning() => new Figure(points.ToList(), Graphics, DrawPen, height, width)
+            {DoTmo = DoTmo, IsFunction = IsFunction};
 
         // Алгоритм закрашивания внутри многоугольника
         public void FillIn(Pen drawPen, int pictureBoxHeight, bool haveBorder)
         {
+            if (IsFunction)
+            {
+                PaintingLineInFigure();
+            }
             PaintingLineInFigure(haveBorder);
             var arr = SearchYMinAndMax(pictureBoxHeight);
             var min = arr[0];
@@ -109,6 +82,9 @@ namespace _3_Laba_GSK
             }
         }
 
+
+        #region Закрашивание вне многоугольника
+
         // Алгоритм для закрашивания многоугольника против часовой стрелки
         public void FillOut(bool haveBorder, Pen drawPen, PictureBox pictureBox)
         {
@@ -124,20 +100,17 @@ namespace _3_Laba_GSK
         }
 
         // вычисление площади треугольника
-        private bool CalculationSquare(int j)
-        {
-            if (j == 0)
-                return Square(points.Count - 1, j, j + 1);
-            return j == points.Count - 1 ? Square(j - 1, j, 0) : Square(j - 1, j, j + 1);
-        }
+        private bool CalculationSquare(int j) =>
+            j == 0 ? Square(points.Count - 1, j, j + 1) :
+            j == points.Count - 1 ? Square(j - 1, j, 0) : Square(j - 1, j, j + 1);
 
         private bool Square(int prev, int now, int next) =>
-            0.5 * ((points[prev].X * points[now].Y)
-                   + (points[prev].Y * points[next].X)
-                   + (points[now].X * points[next].Y)
-                   - (points[now].Y * points[next].X)
-                   - (points[prev].Y * points[now].X)
-                   - (points[prev].X * points[next].Y)) < 0;
+            0.5 * (points[prev].X * points[now].Y
+                   + points[prev].Y * points[next].X
+                   + points[now].X * points[next].Y
+                   - points[now].Y * points[next].X
+                   - points[prev].Y * points[now].X
+                   - points[prev].X * points[next].Y) < 0;
 
         public Tuple2<List<float>, List<float>> CalculationListXrAndXl(int y)
         {
@@ -161,7 +134,7 @@ namespace _3_Laba_GSK
 
             if (Check(k, 0, y))
             {
-                var x = -((y * (points[k].X - points[0].X))
+                var x = -(y * (points[k].X - points[0].X)
                             - points[k].X * points[0].Y + points[0].X * points[k].Y)
                         / (points[0].Y - points[k].Y);
                 if (points[0].Y - points[k].Y > 0)
@@ -231,9 +204,12 @@ namespace _3_Laba_GSK
                 xR.Clear();
             }
         }
+        
 
+        #endregion
+        
         /// <summary>
-        ///  Рисование сторон
+        ///  Рисование ребер
         /// </summary>
         public void PaintingLineInFigure(bool haveBorder)
         {
@@ -246,10 +222,10 @@ namespace _3_Laba_GSK
             }
         }
 
-        public void PaintingLineInFigure(Pen drawPen)
+        private void PaintingLineInFigure()
         {
             for (var i = 0; i < points.Count - 1; i++)
-                Graphics.DrawLine(drawPen, points[i].ToPoint(), points[i + 1].ToPoint());
+                Graphics.DrawLine(DrawPen, points[i].ToPoint(), points[i + 1].ToPoint());
         }
 
         // Поиск мин/макс X
@@ -431,6 +407,13 @@ namespace _3_Laba_GSK
         }
 
         private int updateAlpha;
+
+        
+        //
+        public Figure()
+        {
+            throw new NotImplementedException();
+        }
 
         public void Rotation(int mouse, int height, TextBox textBox2, MouseEventArgs em, int operation)
         {

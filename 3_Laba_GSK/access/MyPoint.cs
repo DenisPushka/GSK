@@ -2,7 +2,7 @@
 
 namespace _3_Laba_GSK
 {
-    internal struct MyPoint
+    public struct MyPoint
     {
         public float X;
         public float Y;

@@ -24,26 +24,25 @@ namespace _3_Laba_GSK
         #region Код, автоматически созданный конструктором форм Windows
 
         /// <summary>
-        /// Требуемый метод для поддержки конструктора — не изменяйте 
-        /// содержимое этого метода с помощью редактора кода.
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
         {
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.pictureBoxMain = new System.Windows.Forms.PictureBox();
+            this.comboBoxColor = new System.Windows.Forms.ComboBox();
+            this.comboBoxFill = new System.Windows.Forms.ComboBox();
+            this.comboBoxSelectFigure = new System.Windows.Forms.ComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.button3 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.comboBox6 = new System.Windows.Forms.ComboBox();
-            this.comboBox5 = new System.Windows.Forms.ComboBox();
+            this.comboBoxOperation = new System.Windows.Forms.ComboBox();
+            this.comboBoxVertCount = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
-            this.comboBox4 = new System.Windows.Forms.ComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.comboBoxSelectTmo = new System.Windows.Forms.ComboBox();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBoxMain)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,68 +71,56 @@ namespace _3_Laba_GSK
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.pictureBox1.Location = new System.Drawing.Point(23, 12);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1395, 616);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.Form1_Load);
-            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.PictureMouseDown);
-            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureBoxMouseMove);
+            this.pictureBoxMain.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pictureBoxMain.BackColor = System.Drawing.SystemColors.Window;
+            this.pictureBoxMain.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.pictureBoxMain.Location = new System.Drawing.Point(23, 12);
+            this.pictureBoxMain.Name = "pictureBoxMain";
+            this.pictureBoxMain.Size = new System.Drawing.Size(1395, 616);
+            this.pictureBoxMain.TabIndex = 2;
+            this.pictureBoxMain.TabStop = false;
+            this.pictureBoxMain.Click += new System.EventHandler(this.Form1_Load);
+            this.pictureBoxMain.MouseClick += new System.Windows.Forms.MouseEventHandler(this.PictureMouseDown);
+            this.pictureBoxMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PictureBoxMouseMove);
             // 
             // comboBox1
             // 
-            this.comboBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Черный",
-            "Красный",
-            "Зеленый",
-            "Синий"});
-            this.comboBox1.Location = new System.Drawing.Point(320, 79);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(150, 21);
-            this.comboBox1.TabIndex = 3;
-            this.comboBox1.Text = "Цвета";
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.ComboBox_GetColor);
+            this.comboBoxColor.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.comboBoxColor.FormattingEnabled = true;
+            this.comboBoxColor.Items.AddRange(new object[] {"Черный", "Красный", "Зеленый", "Синий"});
+            this.comboBoxColor.Location = new System.Drawing.Point(320, 79);
+            this.comboBoxColor.Name = "comboBoxColor";
+            this.comboBoxColor.Size = new System.Drawing.Size(150, 21);
+            this.comboBoxColor.TabIndex = 3;
+            this.comboBoxColor.Text = "Цвета";
+            this.comboBoxColor.SelectedIndexChanged += new System.EventHandler(this.ComboBox_GetColor);
             // 
             // comboBox2
             // 
-            this.comboBox2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.comboBox2.BackColor = System.Drawing.SystemColors.InactiveCaption;
-            this.comboBox2.ForeColor = System.Drawing.SystemColors.InfoText;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "Закрасить внутри",
-            "Закрасить снаружи"});
-            this.comboBox2.Location = new System.Drawing.Point(274, 50);
-            this.comboBox2.Margin = new System.Windows.Forms.Padding(5);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(264, 21);
-            this.comboBox2.TabIndex = 4;
-            this.comboBox2.Text = "Тип заливки";
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.ComboBox_SelectPainting);
+            this.comboBoxFill.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.comboBoxFill.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.comboBoxFill.ForeColor = System.Drawing.SystemColors.InfoText;
+            this.comboBoxFill.FormattingEnabled = true;
+            this.comboBoxFill.Items.AddRange(new object[] {"Закрасить внутри", "Закрасить снаружи"});
+            this.comboBoxFill.Location = new System.Drawing.Point(274, 50);
+            this.comboBoxFill.Margin = new System.Windows.Forms.Padding(5);
+            this.comboBoxFill.Name = "comboBoxFill";
+            this.comboBoxFill.Size = new System.Drawing.Size(264, 21);
+            this.comboBoxFill.TabIndex = 4;
+            this.comboBoxFill.Text = "Тип заливки";
+            this.comboBoxFill.SelectedIndexChanged += new System.EventHandler(this.ComboBox_SelectPainting);
             // 
             // comboBox3
             // 
-            this.comboBox3.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Items.AddRange(new object[] {
-            "Треугольник",
-            "Флаг",
-            "Квадрат",
-            "Уголок1",
-            "Уголок2",
-            "Звезда"});
-            this.comboBox3.Location = new System.Drawing.Point(829, 50);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(150, 21);
-            this.comboBox3.TabIndex = 5;
-            this.comboBox3.Text = "Фигуры";
-            this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.ComboBox_SelectFigure);
+            this.comboBoxSelectFigure.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.comboBoxSelectFigure.FormattingEnabled = true;
+            this.comboBoxSelectFigure.Items.AddRange(new object[] {"Треугольник", "Флаг", "Квадрат", "Уголок1", "Уголок2", "Звезда"});
+            this.comboBoxSelectFigure.Location = new System.Drawing.Point(829, 50);
+            this.comboBoxSelectFigure.Name = "comboBoxSelectFigure";
+            this.comboBoxSelectFigure.Size = new System.Drawing.Size(150, 21);
+            this.comboBoxSelectFigure.TabIndex = 5;
+            this.comboBoxSelectFigure.Text = "Фигуры";
+            this.comboBoxSelectFigure.SelectedIndexChanged += new System.EventHandler(this.ComboBox_SelectFigure);
             // 
             // panel1
             // 
@@ -141,15 +128,14 @@ namespace _3_Laba_GSK
             this.panel1.AutoSize = true;
             this.panel1.BackColor = System.Drawing.SystemColors.ControlDark;
             this.panel1.Controls.Add(this.checkBox2);
-            this.panel1.Controls.Add(this.button3);
             this.panel1.Controls.Add(this.textBox2);
-            this.panel1.Controls.Add(this.comboBox6);
-            this.panel1.Controls.Add(this.comboBox5);
+            this.panel1.Controls.Add(this.comboBoxOperation);
+            this.panel1.Controls.Add(this.comboBoxVertCount);
             this.panel1.Controls.Add(this.button2);
-            this.panel1.Controls.Add(this.comboBox4);
-            this.panel1.Controls.Add(this.comboBox3);
-            this.panel1.Controls.Add(this.comboBox2);
-            this.panel1.Controls.Add(this.comboBox1);
+            this.panel1.Controls.Add(this.comboBoxSelectTmo);
+            this.panel1.Controls.Add(this.comboBoxSelectFigure);
+            this.panel1.Controls.Add(this.comboBoxFill);
+            this.panel1.Controls.Add(this.comboBoxColor);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.checkBox1);
             this.panel1.Location = new System.Drawing.Point(23, 634);
@@ -169,16 +155,6 @@ namespace _3_Laba_GSK
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.CheckBoxBeziers);
             // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(829, 18);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(275, 23);
-            this.button3.TabIndex = 12;
-            this.button3.Text = "Применить выбранное отражение\r\n";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.DoMirror);
-            // 
             // textBox2
             // 
             this.textBox2.Location = new System.Drawing.Point(346, 18);
@@ -189,51 +165,25 @@ namespace _3_Laba_GSK
             // 
             // comboBox6
             // 
-            this.comboBox6.FormattingEnabled = true;
-            this.comboBox6.Items.AddRange(new object[] {
-            "Закрашивание",
-            "Перемещение",
-            "Вращение",
-            "Вращение относительно заданного центра",
-            "Масштабирование",
-            "Масштабирование по ОУ",
-            "Масштабирование относит. заданного центра",
-            "Отражение OX",
-            "Отражение OY",
-            "Отражение нач. кординат"});
-            this.comboBox6.Location = new System.Drawing.Point(603, 18);
-            this.comboBox6.Name = "comboBox6";
-            this.comboBox6.Size = new System.Drawing.Size(175, 21);
-            this.comboBox6.TabIndex = 9;
-            this.comboBox6.Text = "Операции с многоугольником";
-            this.comboBox6.SelectedIndexChanged += new System.EventHandler(this.ComboBox_SelectOperation);
+            this.comboBoxOperation.FormattingEnabled = true;
+            this.comboBoxOperation.Items.AddRange(new object[] {"Закрашивание", "Перемещение", "Вращение", "Вращение относительно заданного центра", "Масштабирование", "Масштабирование по ОУ", "Масштабирование относит. заданного центра", "Отражение OX", "Отражение OY", "Отражение нач. кординат"});
+            this.comboBoxOperation.Location = new System.Drawing.Point(603, 18);
+            this.comboBoxOperation.Name = "comboBoxOperation";
+            this.comboBoxOperation.Size = new System.Drawing.Size(175, 21);
+            this.comboBoxOperation.TabIndex = 9;
+            this.comboBoxOperation.Text = "Операции с многоугольником";
+            this.comboBoxOperation.SelectedIndexChanged += new System.EventHandler(this.ComboBox_SelectOperation);
             // 
             // comboBox5
             // 
-            this.comboBox5.FormattingEnabled = true;
-            this.comboBox5.Items.AddRange(new object[] {
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-            "13",
-            "14",
-            "15",
-            "16",
-            "17",
-            "18",
-            "19",
-            "20"});
-            this.comboBox5.Location = new System.Drawing.Point(846, 81);
-            this.comboBox5.Name = "comboBox5";
-            this.comboBox5.Size = new System.Drawing.Size(121, 21);
-            this.comboBox5.TabIndex = 8;
-            this.comboBox5.Text = "Кол-во n углов";
-            this.comboBox5.SelectedIndexChanged += new System.EventHandler(this.ComboBox_AngleCount);
+            this.comboBoxVertCount.FormattingEnabled = true;
+            this.comboBoxVertCount.Items.AddRange(new object[] {"5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"});
+            this.comboBoxVertCount.Location = new System.Drawing.Point(846, 81);
+            this.comboBoxVertCount.Name = "comboBoxVertCount";
+            this.comboBoxVertCount.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxVertCount.TabIndex = 8;
+            this.comboBoxVertCount.Text = "Кол-во n углов";
+            this.comboBoxVertCount.SelectedIndexChanged += new System.EventHandler(this.ComboBox_VertexCount);
             // 
             // button2
             // 
@@ -248,20 +198,15 @@ namespace _3_Laba_GSK
             // 
             // comboBox4
             // 
-            this.comboBox4.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Items.AddRange(new object[] {
-            "Объединение",
-            "Пересечение",
-            "Симметрическая разность",
-            "Разность А\\В",
-            "Разность В\\А"});
-            this.comboBox4.Location = new System.Drawing.Point(603, 50);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(175, 21);
-            this.comboBox4.TabIndex = 6;
-            this.comboBox4.Text = "ТМО";
-            this.comboBox4.SelectedIndexChanged += new System.EventHandler(this.ComboBox_SelectTMO);
+            this.comboBoxSelectTmo.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.comboBoxSelectTmo.FormattingEnabled = true;
+            this.comboBoxSelectTmo.Items.AddRange(new object[] {"Объединение", "Пересечение", "Симметрическая разность", "Разность А\\В", "Разность В\\А"});
+            this.comboBoxSelectTmo.Location = new System.Drawing.Point(603, 50);
+            this.comboBoxSelectTmo.Name = "comboBoxSelectTmo";
+            this.comboBoxSelectTmo.Size = new System.Drawing.Size(175, 21);
+            this.comboBoxSelectTmo.TabIndex = 6;
+            this.comboBoxSelectTmo.Text = "ТМО";
+            this.comboBoxSelectTmo.SelectedIndexChanged += new System.EventHandler(this.ComboBox_SelectTMO);
             // 
             // Form1
             // 
@@ -270,7 +215,7 @@ namespace _3_Laba_GSK
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1441, 814);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.pictureBoxMain);
             this.MinimumSize = new System.Drawing.Size(876, 589);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -278,29 +223,27 @@ namespace _3_Laba_GSK
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Click += new System.EventHandler(this.Form1_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PictureMouseDown);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize) (this.pictureBoxMain)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
 
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.PictureBox pictureBoxMain;
+        private System.Windows.Forms.ComboBox comboBoxColor;
+        private System.Windows.Forms.ComboBox comboBoxFill;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ComboBox comboBox4;
-        private System.Windows.Forms.ComboBox comboBox3;
+        private System.Windows.Forms.ComboBox comboBoxSelectTmo;
+        private System.Windows.Forms.ComboBox comboBoxSelectFigure;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ComboBox comboBox5;
-        private System.Windows.Forms.ComboBox comboBox6;
+        private System.Windows.Forms.ComboBox comboBoxVertCount;
+        private System.Windows.Forms.ComboBox comboBoxOperation;
         private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.CheckBox checkBox2;
     }
 }

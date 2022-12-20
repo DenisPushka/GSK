@@ -23,40 +23,42 @@ namespace _3_Laba_GSK
         private readonly List<Figure> figures = new List<Figure>();
 
         /// <summary>
-        ///  Массив для совместной обработки исходных границ сегмента
-        /// </summary>
-        private M[] arrayM;
-
-        /// <summary>
         ///  Спец фигура формируется
         /// </summary>
         private bool isSpecialFigureBeingFormed;
+
         /// <summary>
         ///  Буффер
         /// </summary>
         private readonly Bitmap bitmap;
+
         #region To select a user
-        
+
         /// <summary>
         /// Выбор фигуры для рисования
         /// </summary>
         private Figures figureEnum;
+
         /// <summary>
         ///  Множество для ТМО
         /// </summary>
         private readonly int[] setQ = new int[2];
+
         /// <summary>
         ///  Выбор цвета закрашивания фигуры
         /// </summary>
         private readonly Pen drawPen = new Pen(Color.Black, 1);
+
         /// <summary>
         ///  Проверка на кривой Безье
         /// </summary>
         private bool haveBezies;
+
         /// <summary>
         ///  Количество углов
         /// </summary>
         private int angleCount;
+
         /// <summary>
         ///  Выбор операции
         /// </summary>
@@ -66,6 +68,7 @@ namespace _3_Laba_GSK
 
         private bool checkFigure;
         private Point pictureBoxMousePosition;
+        private Figure figureForMove;
 
         public Form1()
         {
@@ -75,7 +78,6 @@ namespace _3_Laba_GSK
             figure = new Figure(graphics);
             StartPosition = FormStartPosition.CenterScreen;
             MouseWheel += GeometricTransformation;
-            MouseWheel += DoMirror;
         }
 
         // Обработчик события
@@ -117,11 +119,27 @@ namespace _3_Laba_GSK
             pictureBox1.Image = bitmap;
         }
 
-        // Обработчик события
+        // Обработчик события перемещения
         private void PictureBoxMouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left && operation == 4 & checkFigure)
-                MoveFigure(e);
+            {
+                figureForMove.Move(e.X - pictureBoxMousePosition.X, e.Y - pictureBoxMousePosition.Y, drawPen,
+                    pictureBox1.Height);
+
+                // Для перемещения результата ТМО
+                if (figureForMove.HaveTmo)
+                {
+                    figures[figures.Count - 1]
+                        .Move(e.X - pictureBoxMousePosition.X, e.Y - pictureBoxMousePosition.Y, drawPen,
+                            pictureBox1.Height);
+
+                    Tmo(figureForMove, figures[figures.Count - 1]);
+                }
+
+                pictureBox1.Image = bitmap;
+                pictureBoxMousePosition = e.Location;
+            }
         }
 
         private void GeometricTransformation(object sender, MouseEventArgs e)
@@ -132,7 +150,7 @@ namespace _3_Laba_GSK
                 TG(figureBuff, e);
                 TG(figures[figures.Count - 2], e);
                 graphics.Clear(Color.White);
-                Tmo();
+                Tmo(figureBuff, figures[figures.Count - 2]);
                 pictureBox1.Image = bitmap;
             }
             else
@@ -141,10 +159,18 @@ namespace _3_Laba_GSK
 
         private void TG(Figure figureBuff, MouseEventArgs e)
         {
-            if (operation == 1)
-                figureBuff.Rotation(e.Delta, textBox2, e);
-            else if (operation == 2)
-                figureBuff.Zoom(pictureBox1.Height, new float[] {e.Delta, e.Delta});
+            switch (operation)
+            {
+                case 1:
+                    figureBuff.Rotation(e.Delta, textBox2, e);
+                    break;
+                case 2:
+                    figureBuff.Zoom(pictureBox1.Height, new float[] {e.Delta, e.Delta});
+                    break;
+                case 3:
+                    figureBuff.Mirror(e);
+                    break;
+            }
 
             graphics.Clear(pictureBox1.BackColor);
             if (figureBuff.IsFunction)
@@ -158,20 +184,12 @@ namespace _3_Laba_GSK
         {
             if (figures[figures.Count - 1].ThisFigure(e.X, e.Y))
             {
+                figureForMove = figures[figures.Count - 1];
                 graphics.DrawEllipse(new Pen(Color.Blue), e.X - 2, e.Y - 2, 10, 10);
                 checkFigure = true;
             }
             else
                 checkFigure = false;
-        }
-        
-        private void MoveFigure (MouseEventArgs e)
-        {
-            figures[figures.Count - 1].Move(e.X - pictureBoxMousePosition.X, e.Y - pictureBoxMousePosition.Y);
-            graphics.Clear(pictureBox1.BackColor);
-            figures[figures.Count - 1].FillIn(drawPen, pictureBox1.Height);
-            pictureBox1.Image = bitmap;
-            pictureBoxMousePosition = e.Location;
         }
 
         private void Create(MouseEventArgs e)
@@ -204,17 +222,15 @@ namespace _3_Laba_GSK
             if (figures.Count > 1)
             {
                 graphics.Clear(Color.White);
-                Tmo();
+                Tmo(figures[figures.Count - 1], figures[figures.Count - 2]);
             }
 
             figure.GetPoints().Clear();
         }
 
         // Алгоритм теоретико-множественных операций
-        private void Tmo()
+        private void Tmo(Figure figure1, Figure figure2)
         {
-            var figure1 = figures[figures.Count - 2];
-            var figure2 = figures[figures.Count - 1];
             var arr = figure1.SearchYMinAndMax(pictureBox1.Height);
             var arr2 = figure2.SearchYMinAndMax(pictureBox1.Height);
             figure1.HaveTmo = true;
@@ -234,7 +250,7 @@ namespace _3_Laba_GSK
 
                 #region Заполнение массива arrayM
 
-                arrayM = new M[xAl.Count * 2 + xBl.Count * 2];
+                var arrayM = new M[xAl.Count * 2 + xBl.Count * 2];
                 for (var i = 0; i < xAl.Count; i++)
                     arrayM[i] = new M(xAl[i], 2);
 
@@ -254,7 +270,7 @@ namespace _3_Laba_GSK
                 #endregion
 
                 // Сортировка
-                SortM();
+                SortM(arrayM);
 
                 var Q = 0;
                 var xrl = new List<int>();
@@ -293,7 +309,7 @@ namespace _3_Laba_GSK
         /// <summary>
         ///  Сортировка по Х
         /// </summary>
-        private void SortM()
+        private static void SortM(M[] arrayM)
         {
             for (var write = 0; write < arrayM.Length; write++)
             for (var sort = 0; sort < arrayM.Length - 1; sort++)
@@ -349,7 +365,7 @@ namespace _3_Laba_GSK
         {
             if (comboBox3.SelectedIndex == 0)
                 figureEnum = Figures.Cross;
-            else if (comboBox3.SelectedIndex == 1) 
+            else if (comboBox3.SelectedIndex == 1)
                 figureEnum = Figures.Star;
 
             isSpecialFigureBeingFormed = true;
@@ -428,20 +444,6 @@ namespace _3_Laba_GSK
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-        }
-
-        /// <summary>
-        /// Отражение
-        /// </summary>
-        private void DoMirror(object sender, MouseEventArgs e)
-        {
-            if (figures.Count == 0) return;
-
-            // Отражение
-            if (operation == 3)
-                figures[figures.Count - 1].Mirror(e);
-
-            pictureBox1.Image = bitmap;
         }
 
         private void CheckBoxBeziers(object sender, EventArgs e) => haveBezies = checkBox2.Checked;

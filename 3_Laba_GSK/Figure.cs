@@ -338,8 +338,9 @@ namespace _3_Laba_GSK
             ToAndFromCenter(false, e);
         }
 
-        public void Move (int dx, int dy)
+        public void Move(int dx, int dy, Pen drawPen, int height)
         {
+            FillIn(new Pen(Color.White), height);
             for (var i = 0; i <= points.Count - 1; i++)
             {
                 var buffer = new PointF
@@ -349,6 +350,9 @@ namespace _3_Laba_GSK
                 };
                 points[i] = buffer;
             }
+
+            if (!HaveTmo)
+                FillIn(drawPen, height);
         }
     }
 }
